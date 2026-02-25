@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>German Learning Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero">
+      <div class="hero__copy">
+        <p class="eyebrow">German Learning</p>
+        <h1>German Study Tabs</h1>
+        <p class="hero__text">
+          Use the live noun gender finder and switch to the beginner Accusative trainer
+          for step-by-step explanations, examples, and interactive practice.
+        </p>
+      </div>
+      <div class="legend" aria-label="Gender color legend">
+        <div class="legend__item legend__item--m">
+          <span class="legend__dot"></span>
+          Masculine (`der`)
+        </div>
+        <div class="legend__item legend__item--f">
+          <span class="legend__dot"></span>
+          Feminine (`die`)
+        </div>
+        <div class="legend__item legend__item--n">
+          <span class="legend__dot"></span>
+          Neuter (`das`)
+        </div>
+      </div>
+    </section>
+
+    <section class="panel tabs-shell">
+      <div class="tabs" role="tablist" aria-label="German learning tools">
+        <button
+          id="tab-gender"
+          type="button"
+          class="tab-btn is-active"
+          role="tab"
+          aria-selected="true"
+          aria-controls="panel-gender"
+          data-tab-target="panel-gender"
+        >
+          Gender Finder
+        </button>
+        <button
+          id="tab-accusative"
+          type="button"
+          class="tab-btn"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-accusative"
+          data-tab-target="panel-accusative"
+          tabindex="-1"
+        >
+          Accusative Trainer
+        </button>
+        <button
+          id="tab-possessive"
+          type="button"
+          class="tab-btn"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-possessive"
+          data-tab-target="panel-possessive"
+          tabindex="-1"
+        >
+          Possessivartikel
+        </button>
+        <button
+          id="tab-time"
+          type="button"
+          class="tab-btn"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-time"
+          data-tab-target="panel-time"
+          tabindex="-1"
+        >
+          German Time
+        </button>
+        <button
+          id="tab-numbers"
+          type="button"
+          class="tab-btn"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-numbers"
+          data-tab-target="panel-numbers"
+          tabindex="-1"
+        >
+          German Numbers
+        </button>
+        <button
+          id="tab-sentence"
+          type="button"
+          class="tab-btn"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-sentence"
+          data-tab-target="panel-sentence"
+          tabindex="-1"
+        >
+          Sentence Validator
+        </button>
+      </div>
+
+      <section
+        id="panel-gender"
+        class="tab-panel is-active"
+        role="tabpanel"
+        aria-labelledby="tab-gender"
+      >
+        <section class="panel search-panel">
+          <form id="lookup-form" class="lookup" autocomplete="off">
+            <label for="word-input" class="sr-only">Enter German noun</label>
+            <input
+              id="word-input"
+              name="word"
+              type="text"
+              placeholder="Try: Haus, Mädchen, See..."
+              aria-describedby="search-help"
+            />
+            <button type="submit">Check Gender</button>
+          </form>
+          <p id="search-help" class="muted">
+            The app checks multiple dictionaries live. You can type the noun (`Haus`) or a form like `den Hund` / `Berge` and it will often resolve the base noun for you.
+          </p>
+
+          <div id="result-card" class="result-card is-empty" aria-live="polite">
+            <p class="result-card__placeholder">
+              Search a word to see its gender live. If it is in the study list, you will also get a meaning and memory tip.
+            </p>
+          </div>
+        </section>
+
+        <section class="panel study-panel">
+          <div class="study-panel__top">
+            <div>
+              <h2>Batch Sentence Generator</h2>
+              <p class="muted">Add up to 10 German nouns as tags, then generate study sentences with English breakdowns.</p>
+            </div>
+          </div>
+
+          <div class="gender-batch-builder" aria-label="Batch sentence generator for nouns">
+            <div class="gender-batch-builder__input-row">
+              <label for="gender-batch-word-input" class="sr-only">Add German noun tag</label>
+              <input
+                id="gender-batch-word-input"
+                type="text"
+                placeholder="Add a noun tag (e.g. Haus) and press Enter"
+                autocomplete="off"
+              />
+              <button type="button" id="gender-batch-add-btn" class="filter-btn">Add Tag</button>
+            </div>
+
+            <div class="gender-batch-builder__tag-row">
+              <div id="gender-batch-tags" class="gender-batch-tags" aria-live="polite">
+                <p class="gender-batch-tags__empty">No tags yet. Add nouns one by one (max 10).</p>
+              </div>
+              <div id="gender-batch-count" class="stat-chip">0 / 10 tags</div>
+            </div>
+
+            <div class="gender-batch-builder__actions">
+              <div id="gender-batch-mode-toggle" class="sentence-mode-toggle" role="group" aria-label="Sentence generation style">
+                <button
+                  type="button"
+                  id="gender-batch-mode-simple-btn"
+                  class="filter-btn is-active"
+                  data-gender-batch-mode="simple"
+                  aria-pressed="true"
+                >
+                  Simple Sentence
+                </button>
+                <button
+                  type="button"
+                  id="gender-batch-mode-complex-btn"
+                  class="filter-btn filter-btn--ghost"
+                  data-gender-batch-mode="complex"
+                  aria-pressed="false"
+                >
+                  Complex Sentence
+                </button>
+              </div>
+              <div class="gender-batch-builder__action-buttons">
+                <button type="button" id="gender-batch-generate-btn" class="filter-btn is-active">
+                  Generate Sentences
+                </button>
+                <button type="button" id="gender-batch-clear-btn" class="filter-btn filter-btn--ghost">
+                  Clear Tags
+                </button>
+              </div>
+            </div>
+
+            <p id="gender-batch-status" class="muted" aria-live="polite">
+              Add nouns as tags, choose simple or complex, then generate one sentence per word.
+            </p>
+
+            <div id="gender-batch-results" class="gender-batch-results" aria-live="polite">
+              <p class="muted">Generated sentences will appear here.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel study-panel">
+          <div class="study-panel__top">
+            <div>
+              <h2>Word List</h2>
+              <p class="muted">Click any word to learn its gender instantly.</p>
+            </div>
+            <div class="study-panel__actions" role="group" aria-label="List filters">
+              <button type="button" class="filter-btn is-active" data-filter="all">All</button>
+              <button type="button" class="filter-btn" data-filter="masculine">Masculine</button>
+              <button type="button" class="filter-btn" data-filter="feminine">Feminine</button>
+              <button type="button" class="filter-btn" data-filter="neuter">Neuter</button>
+              <button type="button" id="random-btn" class="filter-btn filter-btn--ghost">
+                Random Study Word
+              </button>
+            </div>
+          </div>
+
+          <div class="stats" id="stats" aria-live="polite"></div>
+
+          <div class="word-list-wrap">
+            <ul id="word-list" class="word-list" aria-label="German noun list"></ul>
+          </div>
+        </section>
+      </section>
+
+      <section
+        id="panel-accusative"
+        class="tab-panel"
+        role="tabpanel"
+        aria-labelledby="tab-accusative"
+        hidden
+      >
+        <section class="panel accusative-intro">
+          <div>
+            <p class="eyebrow">Beginner Grammar</p>
+            <h2>Accusative (Akkusativ) Step by Step</h2>
+            <p class="hero__text">
+              Learn what the Accusative is, when to use it, how articles change, and how
+              to build simple sentences. Start with the lesson steps, then use the drills.
+            </p>
+          </div>
+          <div class="accusative-highlight">
+            <p class="accusative-highlight__label">Main beginner rule</p>
+            <p class="accusative-highlight__rule">
+              In the Accusative, only masculine singular article usually changes:
+              <strong>`der` → `den`</strong>
+            </p>
+            <div class="acc-table-compact">
+              <div><span>Nominative</span><strong>der Mann</strong></div>
+              <div><span>Accusative</span><strong>den Mann</strong></div>
+              <div><span>Example</span><strong>Ich sehe den Mann.</strong></div>
+            </div>
+          </div>
+        </section>
+
+        <div class="accusative-grid">
+          <section class="panel lesson-panel">
+            <div class="lesson-panel__top">
+              <div>
+                <h3>Step-by-Step Lesson</h3>
+                <p class="muted">Move through the steps in order. Each step has a mini check.</p>
+              </div>
+              <div id="acc-step-progress" class="stat-chip">Step 1 / 5</div>
+            </div>
+
+            <div id="acc-stepper-dots" class="stepper-dots" aria-label="Lesson steps"></div>
+
+            <div id="acc-step-content" class="acc-step-content" aria-live="polite"></div>
+
+            <div class="lesson-panel__actions">
+              <button type="button" id="acc-prev-step" class="filter-btn">Previous Step</button>
+              <button type="button" id="acc-next-step" class="filter-btn is-active">Next Step</button>
+            </div>
+          </section>
+
+          <section class="panel drill-panel">
+            <h3>Article Change Drill</h3>
+            <p class="muted">
+              Pick a noun phrase and see how it changes from nominative to accusative.
+            </p>
+
+            <div class="drill-grid">
+              <label class="drill-field">
+                Nominative phrase
+                <select id="acc-phrase-select">
+                  <option value="der Hund">der Hund (masculine)</option>
+                  <option value="die Frau">die Frau (feminine)</option>
+                  <option value="das Kind">das Kind (neuter)</option>
+                  <option value="die Kinder">die Kinder (plural)</option>
+                  <option value="der Lehrer">der Lehrer (masculine)</option>
+                  <option value="das Buch">das Buch (neuter)</option>
+                </select>
+              </label>
+              <label class="drill-field">
+                Verb (subject does the action)
+                <select id="acc-verb-select">
+                  <option value="sehe">ich sehe</option>
+                  <option value="habe">ich habe</option>
+                  <option value="kenne">ich kenne</option>
+                  <option value="brauche">ich brauche</option>
+                  <option value="finde">ich finde</option>
+                </select>
+              </label>
+            </div>
+
+            <div id="acc-drill-result" class="drill-result" aria-live="polite"></div>
+          </section>
+        </div>
+
+        <section class="panel quiz-panel">
+          <div class="quiz-panel__top">
+            <div>
+              <h3>Accusative Quiz</h3>
+              <p class="muted">Choose the correct accusative form. Designed for beginners.</p>
+            </div>
+            <div id="acc-quiz-score" class="stat-chip">Score: 0 / 0</div>
+          </div>
+
+          <div id="acc-quiz-card" class="acc-quiz-card" aria-live="polite"></div>
+          <div id="acc-quiz-options" class="acc-quiz-options" role="radiogroup" aria-label="Quiz options"></div>
+          <p id="acc-quiz-feedback" class="quiz-feedback" aria-live="polite"></p>
+
+          <div class="quiz-actions">
+            <button type="button" id="acc-quiz-check" class="filter-btn is-active">Check Answer</button>
+            <button type="button" id="acc-quiz-next" class="filter-btn">Next Question</button>
+            <button type="button" id="acc-quiz-reset" class="filter-btn filter-btn--ghost">Reset Quiz</button>
+          </div>
+        </section>
+      </section>
+
+      <section
+        id="panel-possessive"
+        class="tab-panel"
+        role="tabpanel"
+        aria-labelledby="tab-possessive"
+        hidden
+      >
+        <section class="panel poss-intro">
+          <div>
+            <p class="eyebrow">Beginner Grammar</p>
+            <h2>Possessivartikel (Possessive Articles)</h2>
+            <p class="hero__text">
+              Learn how to say my, your, his, her, our in German from the beginning.
+              Start with the step-by-step lesson, then use the builder and quiz.
+            </p>
+          </div>
+          <div class="poss-highlight">
+            <p class="accusative-highlight__label">Beginner idea</p>
+            <p class="accusative-highlight__rule">
+              Possessive articles stand before nouns and show ownership:
+              <strong>`mein Buch`, `deine Tasche`, `sein Auto`</strong>
+            </p>
+            <div class="acc-table-compact">
+              <div><span>English</span><strong>my bag</strong></div>
+              <div><span>German</span><strong>meine Tasche</strong></div>
+              <div><span>Pattern</span><strong>owner + noun gender ending</strong></div>
+            </div>
+          </div>
+        </section>
+
+        <div class="poss-grid">
+          <section class="panel lesson-panel">
+            <div class="lesson-panel__top">
+              <div>
+                <h3>Step-by-Step Lesson</h3>
+                <p class="muted">Understand the forms first, then practice making phrases.</p>
+              </div>
+              <div id="pos-step-progress" class="stat-chip">Step 1 / 4</div>
+            </div>
+
+            <div id="pos-stepper-dots" class="stepper-dots" aria-label="Possessive lesson steps"></div>
+            <div id="pos-step-content" class="acc-step-content" aria-live="polite"></div>
+
+            <div class="lesson-panel__actions">
+              <button type="button" id="pos-prev-step" class="filter-btn">Previous Step</button>
+              <button type="button" id="pos-next-step" class="filter-btn is-active">Next Step</button>
+            </div>
+          </section>
+
+          <section class="panel poss-builder-panel">
+            <h3>Possessive Builder</h3>
+            <p class="muted">Choose owner + noun + case and watch the form change.</p>
+            <div class="drill-grid">
+              <label class="drill-field">
+                Owner (English idea)
+                <select id="pos-owner-select">
+                  <option value="ich">I / my (mein-)</option>
+                  <option value="du">you / your (dein-)</option>
+                  <option value="er">he / his (sein-)</option>
+                  <option value="sie">she / her (ihr-)</option>
+                  <option value="wir">we / our (unser-)</option>
+                  <option value="ihr">you all / your (euer-)</option>
+                  <option value="Sie">formal you / your (Ihr-)</option>
+                </select>
+              </label>
+              <label class="drill-field">
+                Noun
+                <select id="pos-noun-select">
+                  <option value="Hund|masculine">Hund (masculine)</option>
+                  <option value="Tasche|feminine">Tasche (feminine)</option>
+                  <option value="Auto|neuter">Auto (neuter)</option>
+                  <option value="Bücher|plural">Bücher (plural)</option>
+                  <option value="Lehrer|masculine">Lehrer (masculine)</option>
+                  <option value="Schule|feminine">Schule (feminine)</option>
+                </select>
+              </label>
+              <label class="drill-field">
+                Case
+                <select id="pos-case-select">
+                  <option value="nominative">Nominative</option>
+                  <option value="accusative">Accusative</option>
+                </select>
+              </label>
+            </div>
+
+            <div id="pos-builder-result" class="drill-result" aria-live="polite"></div>
+          </section>
+        </div>
+
+        <section class="panel quiz-panel">
+          <div class="quiz-panel__top">
+            <div>
+              <h3>Possessive Quiz</h3>
+              <p class="muted">Choose the correct possessive article form for beginners.</p>
+            </div>
+            <div id="pos-quiz-score" class="stat-chip">Score: 0 / 0</div>
+          </div>
+
+          <div id="pos-quiz-card" class="acc-quiz-card" aria-live="polite"></div>
+          <div id="pos-quiz-options" class="acc-quiz-options" role="radiogroup" aria-label="Possessive quiz options"></div>
+          <p id="pos-quiz-feedback" class="quiz-feedback" aria-live="polite"></p>
+
+          <div class="quiz-actions">
+            <button type="button" id="pos-quiz-check" class="filter-btn is-active">Check Answer</button>
+            <button type="button" id="pos-quiz-next" class="filter-btn">Next Question</button>
+            <button type="button" id="pos-quiz-reset" class="filter-btn filter-btn--ghost">Reset Quiz</button>
+          </div>
+        </section>
+      </section>
+
+      <section
+        id="panel-time"
+        class="tab-panel"
+        role="tabpanel"
+        aria-labelledby="tab-time"
+        hidden
+      >
+        <section class="panel time-intro">
+          <div>
+            <p class="eyebrow">Beginner Conversation</p>
+            <h2>German Time: Official & Unofficial</h2>
+            <p class="hero__text">
+              Learn to read and say time in German using official time (digital style) and
+              unofficial spoken time (nach, vor, halb). A live clock is included.
+            </p>
+          </div>
+          <div class="time-note-card">
+            <p class="accusative-highlight__label">Quick difference</p>
+            <p class="accusative-highlight__rule">
+              Official: <strong>`15:20` → `fünfzehn Uhr zwanzig`</strong><br />
+              Unofficial: <strong>`15:20` → `zwanzig nach drei`</strong>
+            </p>
+          </div>
+        </section>
+
+        <div class="time-grid">
+          <section class="panel time-clock-panel">
+            <div class="time-clock-panel__top">
+              <div>
+                <h3>Interactive Clock</h3>
+                <p class="muted">Set any time and see both German styles.</p>
+              </div>
+              <div class="time-clock-actions">
+                <button type="button" id="time-now-btn" class="filter-btn">Use Current Time</button>
+                <button type="button" id="time-random-btn" class="filter-btn filter-btn--ghost">Random Time</button>
+              </div>
+            </div>
+
+            <div class="time-clock-layout">
+              <div class="analog-clock" id="analog-clock" aria-label="Analog clock depiction">
+                <div class="analog-clock__face" id="clock-face"></div>
+                <div class="analog-clock__hand analog-clock__hand--hour" id="clock-hour-hand"></div>
+                <div class="analog-clock__hand analog-clock__hand--minute" id="clock-minute-hand"></div>
+                <div class="analog-clock__center"></div>
+              </div>
+
+              <div class="time-controls">
+                <label class="drill-field">
+                  Hour
+                  <input id="time-hour-input" type="range" min="0" max="23" value="15" />
+                </label>
+                <label class="drill-field">
+                  Minute
+                  <input id="time-minute-input" type="range" min="0" max="59" value="20" />
+                </label>
+                <div class="time-readout-row">
+                  <div class="stat-chip" id="time-digital-chip">15:20</div>
+                  <div class="stat-chip" id="time-12h-chip">3:20 PM</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel time-phrases-panel">
+            <h3>German Time Phrases</h3>
+            <p class="muted">Compare official and everyday spoken German.</p>
+
+            <div id="time-official-card" class="time-phrase-card" aria-live="polite"></div>
+            <div id="time-unofficial-card" class="time-phrase-card" aria-live="polite"></div>
+
+            <div class="time-lesson-box">
+              <h4>Beginner patterns</h4>
+              <ul class="acc-step-bullets">
+                <li><strong>nach</strong> = after/past (e.g. <code>zehn nach drei</code>)</li>
+                <li><strong>vor</strong> = before/to (e.g. <code>zehn vor vier</code>)</li>
+                <li><strong>halb vier</strong> = 3:30 (half to four)</li>
+                <li><strong>Viertel nach/vor</strong> = quarter past / quarter to</li>
+              </ul>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section
+        id="panel-numbers"
+        class="tab-panel"
+        role="tabpanel"
+        aria-labelledby="tab-numbers"
+        hidden
+      >
+        <section class="panel numbers-intro">
+          <div>
+            <p class="eyebrow">Numbers & Dates</p>
+            <h2>German Numbers: Count, Order, and Say Dates</h2>
+            <p class="hero__text">
+              Learn German numbers step by step: cardinal numbers (1, 2, 3), ordinal numbers
+              (1st, 2nd, 3rd), and date forms used in real sentences. Every section includes
+              pronunciation buttons so you can hear the numbers and repeat them.
+            </p>
+          </div>
+          <div class="numbers-note-card">
+            <p class="accusative-highlight__label">Beginner patterns</p>
+            <p class="accusative-highlight__rule">
+              <strong>21 = einundzwanzig</strong> (ones + <strong>und</strong> + tens)<br />
+              <strong>1.</strong> = <strong>der erste</strong>, but for dates you usually say
+              <strong>am ersten</strong>.
+            </p>
+          </div>
+        </section>
+
+        <div class="numbers-grid">
+          <section class="panel numbers-explorer-panel">
+            <div class="time-clock-panel__top">
+              <div>
+                <h3>Interactive Number Explorer</h3>
+                <p class="muted">
+                  Move the slider or type a number to see how it is written and spoken in German.
+                </p>
+              </div>
+              <div class="time-clock-actions">
+                <button type="button" id="numbers-random-btn" class="filter-btn">
+                  Random Number
+                </button>
+              </div>
+            </div>
+
+            <div class="numbers-controls">
+              <label class="drill-field" for="numbers-value-range">
+                Choose a number (0-999)
+                <input id="numbers-value-range" type="range" min="0" max="999" value="15" />
+              </label>
+              <label class="drill-field" for="numbers-value-input">
+                Type a number
+                <input id="numbers-value-input" type="number" min="0" max="999" step="1" value="15" />
+              </label>
+            </div>
+
+            <div
+              id="numbers-quick-list"
+              class="numbers-quick-list"
+              role="group"
+              aria-label="Quick number examples"
+            ></div>
+
+            <div id="numbers-cardinal-card" class="time-phrase-card" aria-live="polite"></div>
+            <div id="numbers-ordinal-card" class="time-phrase-card" aria-live="polite"></div>
+            <div id="numbers-dateform-card" class="time-phrase-card" aria-live="polite"></div>
+
+            <div class="time-lesson-box">
+              <h4>English Breakdown</h4>
+              <div id="numbers-breakdown" class="sentence-breakdown" aria-live="polite"></div>
+              <p id="numbers-breakdown-note" class="muted numbers-breakdown-note"></p>
+            </div>
+          </section>
+
+          <section class="panel numbers-date-panel">
+            <div class="quiz-panel__top">
+              <div>
+                <h3>Ordinalzahlen: Datum (Wann? Am ...)</h3>
+                <p class="muted">
+                  These are the most useful date forms for school, exams, birthdays, and appointments.
+                </p>
+              </div>
+            </div>
+
+            <div
+              id="numbers-ordinal-reference"
+              class="numbers-ordinal-reference"
+              aria-label="Common ordinal date forms"
+            ></div>
+
+            <div class="time-lesson-box">
+              <h4>Build a Date Sentence</h4>
+              <p class="muted">
+                Pick a day and month. The app shows the correct date phrase and a beginner example sentence.
+              </p>
+
+              <div class="numbers-date-builder">
+                <label class="drill-field" for="numbers-day-select">
+                  Day
+                  <select id="numbers-day-select"></select>
+                </label>
+                <label class="drill-field" for="numbers-month-select">
+                  Month
+                  <select id="numbers-month-select"></select>
+                </label>
+                <label class="drill-field" for="numbers-date-topic-select">
+                  Example sentence topic
+                  <select id="numbers-date-topic-select">
+                    <option value="birthday">Birthday</option>
+                    <option value="exam">Exam</option>
+                    <option value="meeting">Appointment</option>
+                    <option value="holiday">Holiday</option>
+                  </select>
+                </label>
+              </div>
+
+              <div id="numbers-date-phrase-card" class="time-phrase-card" aria-live="polite"></div>
+              <div id="numbers-date-example-card" class="time-phrase-card" aria-live="polite"></div>
+
+              <div class="numbers-date-breakdown-box">
+                <p class="time-phrase-card__label">English Breakdown</p>
+                <div id="numbers-date-breakdown" class="sentence-breakdown" aria-live="polite"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <section class="panel numbers-quiz-panel quiz-panel">
+          <div class="quiz-panel__top">
+            <div>
+              <h3>Numbers Practice Quiz</h3>
+              <p class="muted">
+                Practice cardinal numbers and date ordinals. Listen, choose, and check your answer.
+              </p>
+            </div>
+            <div id="numbers-quiz-score" class="stat-chip">Score: 0 / 0</div>
+          </div>
+
+          <div id="numbers-quiz-card" class="acc-quiz-card" aria-live="polite"></div>
+          <div
+            id="numbers-quiz-options"
+            class="acc-quiz-options"
+            role="radiogroup"
+            aria-label="German numbers quiz options"
+          ></div>
+          <p id="numbers-quiz-feedback" class="quiz-feedback" aria-live="polite"></p>
+
+          <div class="quiz-actions">
+            <button type="button" id="numbers-quiz-check" class="filter-btn is-active">
+              Check Answer
+            </button>
+            <button type="button" id="numbers-quiz-next" class="filter-btn">
+              Next Question
+            </button>
+            <button type="button" id="numbers-quiz-reset" class="filter-btn filter-btn--ghost">
+              Reset Quiz
+            </button>
+          </div>
+        </section>
+      </section>
+
+      <section
+        id="panel-sentence"
+        class="tab-panel"
+        role="tabpanel"
+        aria-labelledby="tab-sentence"
+        hidden
+      >
+        <section class="panel sentence-intro">
+          <div>
+            <p class="eyebrow">Writing Practice</p>
+            <h2>Live Translator + Sentence Validator</h2>
+            <p class="hero__text">
+              Type a German sentence and get a live English translation while you write.
+              Then click validate to check grammar/spelling and see a corrected version if needed.
+            </p>
+          </div>
+          <div class="sentence-note-card">
+            <p class="accusative-highlight__label">How to use it</p>
+            <p class="accusative-highlight__rule">
+              Live translation shows <strong>meaning</strong>.<br />
+              <strong>Validate</strong> checks whether the German sentence is correct and gives corrections + alternatives.
+            </p>
+          </div>
+        </section>
+
+        <div class="sentence-grid">
+          <section class="panel sentence-compose-panel">
+            <div class="quiz-panel__top">
+              <div>
+                <h3>Write in German</h3>
+                <p class="muted">Example: <code>ich habe ein auto</code> or <code>Ich möchte einen Kaffee.</code></p>
+              </div>
+              <div class="time-clock-actions">
+                <button type="button" id="sentence-clear-btn" class="filter-btn filter-btn--ghost">Clear</button>
+              </div>
+            </div>
+
+            <label class="drill-field sentence-field" for="sentence-input">
+              German sentence
+              <textarea
+                id="sentence-input"
+                rows="5"
+                placeholder="Type a German sentence here..."
+                aria-describedby="sentence-live-help"
+              ></textarea>
+            </label>
+            <p id="sentence-live-help" class="muted">
+              Translation updates live while typing. Validation runs only when you click the button.
+            </p>
+
+            <div class="sentence-mode-panel" aria-label="Sentence validation mode">
+              <p class="time-phrase-card__label sentence-mode-panel__label">Validator Mode</p>
+              <div id="sentence-mode-toggle" class="sentence-mode-toggle" role="group" aria-label="Validation strict mode toggle">
+                <button
+                  type="button"
+                  id="sentence-mode-grammar-btn"
+                  class="filter-btn is-active"
+                  data-sentence-mode="grammar"
+                  aria-pressed="true"
+                >
+                  Grammar Only
+                </button>
+                <button
+                  type="button"
+                  id="sentence-mode-strict-btn"
+                  class="filter-btn filter-btn--ghost"
+                  data-sentence-mode="strict"
+                  aria-pressed="false"
+                >
+                  Strict (Grammar + Style)
+                </button>
+              </div>
+              <p id="sentence-mode-help" class="muted sentence-mode-help">
+                Grammar Only checks grammar/spelling. Strict also counts style suggestions in the verdict.
+              </p>
+            </div>
+
+            <div id="sentence-live-card" class="time-phrase-card sentence-live-card" aria-live="polite">
+              <div class="time-phrase-card__top">
+                <div>
+                  <p class="time-phrase-card__label">Live English Translation</p>
+                  <p class="time-phrase-card__text" id="sentence-live-translation">Type a sentence to see the translation.</p>
+                </div>
+              </div>
+              <p class="time-phrase-card__hint" id="sentence-live-status">Waiting for input.</p>
+            </div>
+
+            <div class="quiz-actions">
+              <button type="button" id="sentence-validate-btn" class="filter-btn is-active">Validate Sentence</button>
+            </div>
+
+            <div class="time-lesson-box sentence-history-box">
+              <div class="sentence-history-box__top">
+                <div>
+                  <h4>Sentence History</h4>
+                  <p class="muted">Saved on this device.</p>
+                </div>
+                <button type="button" id="sentence-history-clear-btn" class="filter-btn filter-btn--ghost">
+                  Clear History
+                </button>
+              </div>
+              <div id="sentence-history-list" class="sentence-history-list" aria-live="polite">
+                <p class="muted">No history yet. Validate a sentence to save it here.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel sentence-result-panel">
+            <div class="quiz-panel__top">
+              <div>
+                <h3>Validation Result</h3>
+                <p class="muted">Checks grammar/spelling and suggests a better version if needed.</p>
+              </div>
+              <div id="sentence-verdict-chip" class="stat-chip">Not validated yet</div>
+            </div>
+
+            <div class="sentence-compare-grid">
+              <div id="sentence-original-card" class="sentence-compare-card">
+                <p class="time-phrase-card__label">Your sentence</p>
+                <p id="sentence-original-text" class="sentence-compare-card__text">-</p>
+                <div id="sentence-original-actions" class="time-speak-row"></div>
+              </div>
+              <div id="sentence-corrected-card" class="sentence-compare-card">
+                <p class="time-phrase-card__label">Correct sentence</p>
+                <p id="sentence-corrected-text" class="sentence-compare-card__text">-</p>
+                <div id="sentence-corrected-actions" class="time-speak-row"></div>
+              </div>
+            </div>
+
+            <p id="sentence-validation-message" class="quiz-feedback" aria-live="polite"></p>
+
+            <div class="time-lesson-box">
+              <h4>Validator Feedback</h4>
+              <ul id="sentence-issues-list" class="acc-step-bullets sentence-issues-list">
+                <li>Click <strong>Validate Sentence</strong> to check your German sentence.</li>
+              </ul>
+            </div>
+
+            <div class="time-lesson-box">
+              <h4>More Ways to Say It (with English breakdown)</h4>
+              <div id="sentence-alternatives-list" class="sentence-alt-list" aria-live="polite">
+                <p class="muted">Validation will generate corrected versions and alternative wording suggestions here.</p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
