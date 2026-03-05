@@ -9,6 +9,7 @@ const STATIC_ROUTES = new Map([
   ["/", "index.html"],
   ["/index.html", "index.html"],
   ["/config.js", "config.js"],
+  ["/api-client.js", "api-client.js"],
   ["/styles.css", "styles.css"],
   ["/script.js", "script.js"]
 ]);
@@ -2145,6 +2146,15 @@ const server = http.createServer(async (req, res) => {
   await serveStatic(res, requestUrl.pathname);
 });
 
-server.listen(PORT, () => {
-  console.log(`German Gender Trainer running at http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  server.listen(PORT, () => {
+    console.log(`German Gender Trainer running at http://localhost:${PORT}`);
+  });
+}
+
+module.exports = {
+  normalizeSentenceInput,
+  translateGermanSentenceToEnglish,
+  validateGermanSentence,
+  lookupWordStudyDataLive
+};

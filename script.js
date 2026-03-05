@@ -3033,6 +3033,10 @@ function renderLoadingResult(query) {
 }
 
 async function fetchLiveGender(query) {
+  if (window.GermanLearningApi?.getGender) {
+    return window.GermanLearningApi.getGender(query);
+  }
+
   const endpoint = USE_EXTERNAL_API ? "/gender" : "/api/gender";
   const response = await fetch(buildApiUrl(endpoint, { word: query }));
   const data = await response.json().catch(() => ({}));
@@ -3046,6 +3050,10 @@ async function fetchLiveGender(query) {
 }
 
 async function fetchLiveSentenceTranslation(text) {
+  if (window.GermanLearningApi?.translateSentence) {
+    return window.GermanLearningApi.translateSentence(text);
+  }
+
   const endpoint = USE_EXTERNAL_API ? "/sentence/translate" : "/api/sentence/translate";
   const response = await fetch(buildApiUrl(endpoint, { text }));
   const data = await response.json().catch(() => ({}));
@@ -3058,6 +3066,10 @@ async function fetchLiveSentenceTranslation(text) {
 }
 
 async function fetchSentenceValidation(text, mode = sentenceValidationMode) {
+  if (window.GermanLearningApi?.validateSentence) {
+    return window.GermanLearningApi.validateSentence(text, mode);
+  }
+
   const endpoint = USE_EXTERNAL_API ? "/sentence/validate" : "/api/sentence/validate";
   const response = await fetch(buildApiUrl(endpoint, { text, mode }));
   const data = await response.json().catch(() => ({}));
