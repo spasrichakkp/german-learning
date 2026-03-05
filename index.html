@@ -65,6 +65,18 @@
           Accusative Trainer
         </button>
         <button
+          id="tab-conjugation"
+          type="button"
+          class="tab-btn"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-conjugation"
+          data-tab-target="panel-conjugation"
+          tabindex="-1"
+        >
+          Verb Conjugation
+        </button>
+        <button
           id="tab-possessive"
           type="button"
           class="tab-btn"
@@ -99,6 +111,18 @@
           tabindex="-1"
         >
           German Numbers
+        </button>
+        <button
+          id="tab-keyboard"
+          type="button"
+          class="tab-btn"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-keyboard"
+          data-tab-target="panel-keyboard"
+          tabindex="-1"
+        >
+          Virtual Keyboard
         </button>
         <button
           id="tab-sentence"
@@ -338,6 +362,124 @@
             <button type="button" id="acc-quiz-next" class="filter-btn">Next Question</button>
             <button type="button" id="acc-quiz-reset" class="filter-btn filter-btn--ghost">Reset Quiz</button>
           </div>
+        </section>
+      </section>
+
+      <section
+        id="panel-conjugation"
+        class="tab-panel"
+        role="tabpanel"
+        aria-labelledby="tab-conjugation"
+        hidden
+      >
+        <section class="panel conjugation-intro">
+          <div>
+            <p class="eyebrow">Core Grammar Track</p>
+            <h2>Verb Conjugation: Step by Step</h2>
+            <p class="hero__text">
+              Learn how German verbs change by subject and tense, including regular verbs,
+              irregular verbs, stem-changing verbs, modal verbs, separable verbs, and reflexive verbs.
+              This track also connects conjugation with <strong>Nominativ</strong> and
+              <strong>Akkusativ</strong> sentence roles.
+            </p>
+          </div>
+          <div class="conjugation-note-card">
+            <p class="accusative-highlight__label">What this tab builds</p>
+            <p class="accusative-highlight__rule">
+              <strong>Conjugation</strong>: ich/du/er ... endings and tense forms<br />
+              <strong>Case link</strong>: subject in Nominativ, direct object in Akkusativ<br />
+              <strong>Progress path</strong>: future lessons (Dativ, Genitiv, advanced structures)
+            </p>
+          </div>
+        </section>
+
+        <div class="conjugation-grid">
+          <section class="panel conjugation-lesson-panel">
+            <div class="lesson-panel__top">
+              <div>
+                <h3>Lesson Path</h3>
+                <p class="muted">Follow the steps in order. Each step has a mini-check.</p>
+              </div>
+              <div id="conj-step-progress" class="stat-chip">Step 1 / 5</div>
+            </div>
+
+            <div id="conj-stepper-dots" class="stepper-dots stepper-dots--conj" aria-label="Conjugation lesson steps"></div>
+            <div id="conj-step-content" class="acc-step-content" aria-live="polite"></div>
+
+            <div class="lesson-panel__actions">
+              <button type="button" id="conj-prev-step" class="filter-btn">Previous Step</button>
+              <button type="button" id="conj-next-step" class="filter-btn is-active">Next Step</button>
+            </div>
+          </section>
+
+          <section class="panel conjugation-builder-panel">
+            <div class="quiz-panel__top">
+              <div>
+                <h3>Interactive Conjugation Builder</h3>
+                <p class="muted">
+                  Choose a verb type, verb, tense, and subject pronoun. Then see full conjugation and a guided sentence.
+                </p>
+              </div>
+            </div>
+
+            <div class="conj-builder-grid">
+              <label class="drill-field" for="conj-type-select">
+                Verb type
+                <select id="conj-type-select"></select>
+              </label>
+              <label class="drill-field" for="conj-verb-select">
+                Verb
+                <select id="conj-verb-select"></select>
+              </label>
+              <label class="drill-field" for="conj-tense-select">
+                Tense
+                <select id="conj-tense-select">
+                  <option value="present">Präsens (Present)</option>
+                  <option value="perfect">Perfekt (Present Perfect)</option>
+                </select>
+              </label>
+              <label class="drill-field" for="conj-subject-select">
+                Subject pronoun (Nominativ)
+                <select id="conj-subject-select">
+                  <option value="ich">ich (I)</option>
+                  <option value="du">du (you, singular informal)</option>
+                  <option value="er">er/sie/es (he/she/it)</option>
+                  <option value="wir">wir (we)</option>
+                  <option value="ihr">ihr (you, plural informal)</option>
+                  <option value="sie">sie/Sie (they/you formal)</option>
+                </select>
+              </label>
+              <label class="drill-field" for="conj-pattern-select">
+                Sentence pattern
+                <select id="conj-pattern-select">
+                  <option value="default">Default for this verb</option>
+                  <option value="nominativ">Nominativ only (subject + verb)</option>
+                  <option value="akkusativ">Nominativ + Akkusativ object</option>
+                </select>
+              </label>
+            </div>
+
+            <div id="conj-builder-result" class="drill-result" aria-live="polite"></div>
+
+            <div class="time-lesson-box">
+              <h4>Full Conjugation Table</h4>
+              <div id="conj-conjugation-table" class="conj-table-wrap" aria-live="polite"></div>
+            </div>
+          </section>
+        </div>
+
+        <section class="panel conjugation-roadmap-panel">
+          <div class="quiz-panel__top">
+            <div>
+              <h3>Lesson Progress and Next Topics</h3>
+              <p class="muted">
+                Core steps unlock in this tab now. Future topics can be added as new lessons as you progress.
+              </p>
+            </div>
+            <div id="conj-roadmap-progress" class="stat-chip">0 / 5 core lessons done</div>
+          </div>
+
+          <div id="conj-roadmap-list" class="conj-roadmap-list" aria-live="polite"></div>
         </section>
       </section>
 
@@ -694,6 +836,189 @@
       </section>
 
       <section
+        id="panel-keyboard"
+        class="tab-panel"
+        role="tabpanel"
+        aria-labelledby="tab-keyboard"
+        hidden
+      >
+        <section class="panel keyboard-intro">
+          <div>
+            <p class="eyebrow">Typing Practice</p>
+            <h2>Virtual German Keyboard + Smart Conversion</h2>
+            <p class="hero__text">
+              Type normal English-style text and convert it to German spelling with
+              umlauts (<strong>ä ö ü</strong>) and Eszett (<strong>ß</strong>).
+              The app also fixes small punctuation/capitalization mistakes for beginner writing.
+            </p>
+          </div>
+          <div class="keyboard-note-card">
+            <p class="accusative-highlight__label">Quick examples</p>
+            <p class="accusative-highlight__rule">
+              <code>gruesse</code> -> <strong>grüße</strong><br />
+              <code>strasse</code> -> <strong>straße</strong><br />
+              <code>ich komme aus koeln .</code> -> <strong>Ich komme aus Köln.</strong>
+            </p>
+          </div>
+        </section>
+
+        <div class="keyboard-grid">
+          <section class="panel keyboard-workbench">
+            <div class="quiz-panel__top">
+              <div>
+                <h3>Type and Convert</h3>
+                <p class="muted">Write with your normal keyboard or click keys below.</p>
+              </div>
+              <div class="time-clock-actions">
+                <button type="button" id="keyboard-clear-btn" class="filter-btn filter-btn--ghost">Clear</button>
+              </div>
+            </div>
+
+            <label class="drill-field sentence-field" for="keyboard-input">
+              Input text
+              <textarea
+                id="keyboard-input"
+                rows="5"
+                placeholder="Example: ich mochte kaese und grusse aus muenchen"
+              ></textarea>
+            </label>
+
+            <div class="keyboard-toolbar">
+              <button type="button" id="keyboard-convert-btn" class="filter-btn is-active">
+                Convert English -> German
+              </button>
+              <button type="button" id="keyboard-fix-btn" class="filter-btn">
+                Correct Small Mistakes
+              </button>
+              <button type="button" id="keyboard-copy-btn" class="filter-btn filter-btn--ghost">
+                Copy Output
+              </button>
+            </div>
+
+            <div class="keyboard-assist-panel">
+              <div class="keyboard-assist-panel__top">
+                <p class="keyboard-assist-panel__title">Live Class Assist</p>
+                <button
+                  type="button"
+                  id="keyboard-live-assist-btn"
+                  class="filter-btn is-active"
+                  aria-pressed="true"
+                >
+                  Live Assist: ON
+                </button>
+              </div>
+              <p class="muted keyboard-assist-panel__note">
+                Keep this ON during class for instant spelling support and better flow.
+              </p>
+              <div
+                id="keyboard-sensitivity-toggle"
+                class="keyboard-sensitivity-toggle"
+                role="group"
+                aria-label="Keyboard correction sensitivity"
+              >
+                <button
+                  type="button"
+                  class="filter-btn"
+                  data-keyboard-sensitivity="low"
+                  aria-pressed="false"
+                >
+                  Low
+                </button>
+                <button
+                  type="button"
+                  class="filter-btn is-active"
+                  data-keyboard-sensitivity="medium"
+                  aria-pressed="true"
+                >
+                  Medium
+                </button>
+                <button
+                  type="button"
+                  class="filter-btn"
+                  data-keyboard-sensitivity="high"
+                  aria-pressed="false"
+                >
+                  High
+                </button>
+              </div>
+              <p id="keyboard-sensitivity-help" class="muted keyboard-assist-panel__help">
+                Medium keeps corrections balanced for regular class writing.
+              </p>
+            </div>
+
+            <p id="keyboard-status" class="muted" aria-live="polite">
+              Type text to see live German conversion and fixes.
+            </p>
+
+            <label class="drill-field sentence-field" for="keyboard-output">
+              German output (live)
+              <textarea id="keyboard-output" rows="5" readonly></textarea>
+            </label>
+
+            <div id="keyboard-output-actions" class="time-speak-row"></div>
+
+            <div class="time-lesson-box">
+              <h4>Smart Suggestions</h4>
+              <p class="muted keyboard-suggestions-note">
+                If a word looks close to correct, tap a suggestion to fix it quickly.
+              </p>
+              <div id="keyboard-suggestions" class="keyboard-suggestions" aria-live="polite">
+                <p class="muted keyboard-suggestions__empty">Suggestions will appear while you type.</p>
+              </div>
+            </div>
+
+            <div class="time-lesson-box">
+              <h4>Applied Changes</h4>
+              <ul id="keyboard-changes" class="acc-step-bullets" aria-live="polite">
+                <li>Changes will appear here as you type.</li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="panel keyboard-layout-panel">
+            <div class="quiz-panel__top">
+              <div>
+                <h3>Virtual German Keyboard</h3>
+                <p class="muted">
+                  Includes German letter layout and quick keys for <strong>ä ö ü Ä Ö Ü ß</strong>.
+                </p>
+              </div>
+            </div>
+
+            <div
+              id="keyboard-layout"
+              class="virtual-keyboard"
+              role="group"
+              aria-label="Virtual German keyboard"
+            ></div>
+
+            <div class="time-lesson-box">
+              <h4>Quick Class Phrases</h4>
+              <p class="muted">
+                Insert common live-class sentences with one click, then edit if needed.
+              </p>
+              <div
+                id="keyboard-quick-phrases"
+                class="keyboard-quick-phrases"
+                role="group"
+                aria-label="Quick class phrases"
+              ></div>
+            </div>
+
+            <div class="time-lesson-box">
+              <h4>Class Speed Tips</h4>
+              <ul class="acc-step-bullets">
+                <li><code>ae / oe / ue</code> are converted to <code>ä / ö / ü</code></li>
+                <li>common beginner spellings are fixed (for example <code>strasse</code> -> <code>straße</code>)</li>
+                <li>spacing and sentence-start capitalization are cleaned up</li>
+                <li>Keyboard shortcuts: <code>Alt+A</code> = <code>ä</code>, <code>Alt+O</code> = <code>ö</code>, <code>Alt+U</code> = <code>ü</code>, <code>Alt+S</code> = <code>ß</code></li>
+              </ul>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section
         id="panel-sentence"
         class="tab-panel"
         role="tabpanel"
@@ -843,6 +1168,7 @@
     </section>
   </main>
 
+  <script src="config.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

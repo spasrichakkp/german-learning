@@ -1,23 +1,4 @@
-const http = require("node:http");
-const fs = require("node:fs/promises");
-const path = require("node:path");
-
-const PORT = Number(process.env.PORT) || 3000;
-const ROOT_DIR = __dirname;
-
-const STATIC_ROUTES = new Map([
-  ["/", "index.html"],
-  ["/index.html", "index.html"],
-  ["/config.js", "config.js"],
-  ["/styles.css", "styles.css"],
-  ["/script.js", "script.js"]
-]);
-
-const CONTENT_TYPES = {
-  ".html": "text/html; charset=utf-8",
-  ".css": "text/css; charset=utf-8",
-  ".js": "application/javascript; charset=utf-8"
-};
+/* eslint-disable no-useless-escape */
 
 const GENDER_MAP = {
   m: { gender: "masculine", article: "der", label: "Masculine" },
@@ -2058,53 +2039,104 @@ async function lookupWordStudyDataLive(rawWord) {
   return payload;
 }
 
-const server = http.createServer(async (req, res) => {
-  const requestUrl = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "GET, OPTIONS"
+};
 
-  if (requestUrl.pathname === "/api/sentence/translate") {
-    if (req.method !== "GET") {
-      sendJson(res, 405, { error: "Method not allowed" });
-      return;
+function jsonResponse(status, payload) {
+  return new Response(JSON.stringify(payload), {
+    status,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store",
+      ...corsHeaders
     }
+  });
+}
 
+function routeKeyFromPath(pathname) {
+  const normalized = String(pathname || "").replace(/\/+$/g, "") || "/";
+
+  if (normalized.endsWith("/api/gender") || normalized.endsWith("/gender")) {
+    return "gender";
+  }
+
+  if (normalized.endsWith("/api/sentence/translate") || normalized.endsWith("/sentence/translate")) {
+    return "sentence_translate";
+  }
+
+  if (normalized.endsWith("/api/sentence/validate") || normalized.endsWith("/sentence/validate")) {
+    return "sentence_validate";
+  }
+
+  if (normalized.endsWith("/german-api") || normalized === "/") {
+    return "root";
+  }
+
+  return "unknown";
+}
+
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response("ok", {
+      status: 200,
+      headers: corsHeaders
+    });
+  }
+
+  if (req.method !== "GET") {
+    return jsonResponse(405, { error: "Method not allowed" });
+  }
+
+  const requestUrl = new URL(req.url);
+  const routeKey = routeKeyFromPath(requestUrl.pathname);
+
+  if (routeKey === "root") {
+    return jsonResponse(200, {
+      ok: true,
+      message: "German API Edge Function is running.",
+      routes: [
+        "GET /gender?word=Haus",
+        "GET /sentence/translate?text=Ich%20habe%20ein%20Auto",
+        "GET /sentence/validate?text=ich%20habe%20ein%20auto&mode=grammar"
+      ]
+    });
+  }
+
+  if (routeKey === "sentence_translate") {
     try {
       const text = normalizeSentenceInput(requestUrl.searchParams.get("text") || "");
       if (!text) {
-        sendJson(res, 400, { error: "Please type a German sentence first." });
-        return;
+        return jsonResponse(400, { error: "Please type a German sentence first." });
       }
 
       const englishTranslation = await translateGermanSentenceToEnglish(text);
-      sendJson(res, 200, {
+      return jsonResponse(200, {
         ok: true,
         sentence: text,
         englishTranslation: englishTranslation || null,
         source: "api.mymemory.translated.net"
       });
     } catch (error) {
-      sendJson(res, 502, {
+      return jsonResponse(502, {
         error: error.message || "Live sentence translation failed"
       });
     }
-    return;
   }
 
-  if (requestUrl.pathname === "/api/sentence/validate") {
-    if (req.method !== "GET") {
-      sendJson(res, 405, { error: "Method not allowed" });
-      return;
-    }
-
+  if (routeKey === "sentence_validate") {
     try {
       const result = await validateGermanSentence(requestUrl.searchParams.get("text") || "", {
         mode: requestUrl.searchParams.get("mode") || "grammar"
       });
+
       if (!result.ok) {
-        sendJson(res, 400, result);
-        return;
+        return jsonResponse(400, result);
       }
 
-      sendJson(res, 200, {
+      return jsonResponse(200, {
         ...result,
         sources: {
           translation: "api.mymemory.translated.net",
@@ -2112,39 +2144,26 @@ const server = http.createServer(async (req, res) => {
         }
       });
     } catch (error) {
-      sendJson(res, 502, {
+      return jsonResponse(502, {
         error: error.message || "Sentence validation failed"
       });
     }
-    return;
   }
 
-  if (requestUrl.pathname === "/api/gender") {
-    if (req.method !== "GET") {
-      sendJson(res, 405, { error: "Method not allowed" });
-      return;
-    }
-
+  if (routeKey === "gender") {
     try {
       const word = requestUrl.searchParams.get("word") || "";
       const result = await lookupWordStudyDataLive(word);
-      sendJson(res, 200, result);
+      return jsonResponse(200, result);
     } catch (error) {
-      sendJson(res, 502, {
+      return jsonResponse(502, {
         error: error.message || "Live lookup failed"
       });
     }
-    return;
   }
 
-  if (req.method !== "GET") {
-    sendText(res, 405, "Method Not Allowed");
-    return;
-  }
-
-  await serveStatic(res, requestUrl.pathname);
-});
-
-server.listen(PORT, () => {
-  console.log(`German Gender Trainer running at http://localhost:${PORT}`);
+  return jsonResponse(404, {
+    error: "Not found",
+    hint: "Use /gender, /sentence/translate, or /sentence/validate"
+  });
 });

@@ -361,6 +361,387 @@ const possessiveQuizQuestions = [
   }
 ];
 
+const conjugationPronounOrder = ["ich", "du", "er", "wir", "ihr", "sie"];
+
+const conjugationPronounMeta = {
+  ich: { label: "ich", english: "I" },
+  du: { label: "du", english: "you (singular informal)" },
+  er: { label: "er/sie/es", english: "he/she/it" },
+  wir: { label: "wir", english: "we" },
+  ihr: { label: "ihr", english: "you (plural informal)" },
+  sie: { label: "sie/Sie", english: "they / you (formal)" }
+};
+
+const reflexivePronounMap = {
+  ich: "mich",
+  du: "dich",
+  er: "sich",
+  wir: "uns",
+  ihr: "euch",
+  sie: "sich"
+};
+
+const auxiliaryPresentMap = {
+  haben: {
+    ich: "habe",
+    du: "hast",
+    er: "hat",
+    wir: "haben",
+    ihr: "habt",
+    sie: "haben"
+  },
+  sein: {
+    ich: "bin",
+    du: "bist",
+    er: "ist",
+    wir: "sind",
+    ihr: "seid",
+    sie: "sind"
+  }
+};
+
+const regularPresentEndings = {
+  ich: "e",
+  du: "st",
+  er: "t",
+  wir: "en",
+  ihr: "t",
+  sie: "en"
+};
+
+const conjugationLessons = [
+  {
+    shortLabel: "Base",
+    title: "Step 1: Conjugation Basics (Who does the action?)",
+    explanation:
+      "German verbs change their form depending on the subject pronoun. First find the subject in Nominativ, then choose the verb ending.",
+    bullets: [
+      "Nominativ subjects: ich, du, er/sie/es, wir, ihr, sie/Sie.",
+      "The same infinitive verb has different forms: ich lerne, du lernst, wir lernen.",
+      "Always identify the subject first, then conjugate."
+    ],
+    exampleLines: [
+      "Nominativ subject: <em>Ich</em> lerne Deutsch.",
+      "Nominativ subject: <em>Du</em> lernst Deutsch."
+    ],
+    miniCheck: {
+      prompt: "Which pronoun is the Nominativ subject in: Wir kaufen ein Ticket?",
+      options: ["kaufen", "ein Ticket", "Wir", "Ticket"],
+      correctIndex: 2,
+      explanation: "Wir is the subject (Nominativ), so the verb form must match wir."
+    }
+  },
+  {
+    shortLabel: "Regel",
+    title: "Step 2: Regular Verbs in Präsens",
+    explanation:
+      "Regular verbs follow predictable endings. Learn one pattern well, then apply it to many verbs.",
+    bullets: [
+      "Infinitive: lernen -> stem lern-",
+      "Endings: -e, -st, -t, -en, -t, -en",
+      "Example set: ich lerne, du lernst, er lernt, wir lernen, ihr lernt, sie lernen"
+    ],
+    exampleLines: [
+      "Ich <em>mache</em> die Hausaufgabe.",
+      "Du <em>kaufst</em> ein Ticket."
+    ],
+    miniCheck: {
+      prompt: "Choose the correct form: Du ___ Deutsch. (lernen)",
+      options: ["lerne", "lernst", "lernt", "lernen"],
+      correctIndex: 1,
+      explanation: "For du in present tense, regular verbs usually take -st: du lernst."
+    }
+  },
+  {
+    shortLabel: "Arten",
+    title: "Step 3: Different Verb Types",
+    explanation:
+      "Not all verbs follow the basic regular pattern. Learn the main groups and their key behavior.",
+    bullets: [
+      "Stem-changing verbs: du/er form often changes (fahren -> du fährst).",
+      "Irregular core verbs: sein, haben are fundamental and must be memorized.",
+      "Modal verbs: können, müssen, wollen change strongly.",
+      "Separable verbs: prefix moves to the end in main clauses (aufstehen -> Ich stehe ... auf).",
+      "Reflexive verbs: use reflexive pronouns (ich erinnere mich)."
+    ],
+    exampleLines: [
+      "Ich <em>fahre</em> nach Berlin, du <em>fährst</em> nach Berlin.",
+      "Ich <em>stehe</em> um sieben Uhr <em>auf</em>."
+    ],
+    miniCheck: {
+      prompt: "Which sentence shows a separable verb in present tense?",
+      options: [
+        "Ich stehe auf um sieben Uhr.",
+        "Ich aufstehe um sieben Uhr.",
+        "Ich stehe um sieben Uhr auf.",
+        "Ich habe aufgestanden um sieben Uhr."
+      ],
+      correctIndex: 2,
+      explanation: "In present main clauses, the separable prefix goes to the end: Ich stehe ... auf."
+    }
+  },
+  {
+    shortLabel: "Fälle",
+    title: "Step 4: Conjugation with Nominativ + Akkusativ",
+    explanation:
+      "Conjugation and case work together. The subject is in Nominativ; many verbs also take an Akkusativ object.",
+    bullets: [
+      "Nominativ subject: Ich sehe ...",
+      "Akkusativ object: ... den Hund.",
+      "Masculine singular changes in Akkusativ: der -> den."
+    ],
+    exampleLines: [
+      "<em>Ich</em> (Nominativ) <em>lese</em> <em>das Buch</em> (Akkusativ).",
+      "<em>Er</em> (Nominativ) <em>kauft</em> <em>den Computer</em> (Akkusativ)."
+    ],
+    miniCheck: {
+      prompt: "Which phrase is the Akkusativ object in: Ich kaufe den Computer?",
+      options: ["Ich", "kaufe", "den Computer", "none"],
+      correctIndex: 2,
+      explanation: "Den Computer receives the action and is the direct object in Akkusativ."
+    }
+  },
+  {
+    shortLabel: "Fortschritt",
+    title: "Step 5: Tenses and Lesson Progress Path",
+    explanation:
+      "After present tense, beginners usually learn Perfekt for spoken past. Then the path can continue to Dativ, Genitiv, and advanced clause structures.",
+    bullets: [
+      "Perfekt pattern: auxiliary + participle (ich habe gelernt / ich bin gefahren).",
+      "Use haben with many verbs; use sein with movement/state-change verbs.",
+      "Keep growing lesson by lesson: Present -> Perfekt -> Dativ -> Genitiv -> advanced syntax."
+    ],
+    exampleLines: [
+      "Präsens: Ich lerne Deutsch.",
+      "Perfekt: Ich habe Deutsch gelernt."
+    ],
+    miniCheck: {
+      prompt: "Choose the correct Perfekt sentence:",
+      options: [
+        "Ich habe gefahren nach Berlin.",
+        "Ich bin nach Berlin gefahren.",
+        "Ich bin gefahrene nach Berlin.",
+        "Ich habe nach Berlin fahren."
+      ],
+      correctIndex: 1,
+      explanation: "Fahren usually takes sein in Perfekt: Ich bin nach Berlin gefahren."
+    }
+  }
+];
+
+const conjugationVerbTypeMeta = {
+  regular: { label: "Regular verbs", description: "predictable endings in present tense" },
+  stem: { label: "Stem-changing verbs", description: "du/er forms often change vowels" },
+  irregular: { label: "Core irregular verbs", description: "high-frequency verbs to memorize" },
+  modal: { label: "Modal verbs", description: "express ability, need, permission" },
+  separable: { label: "Separable verbs", description: "prefix moves to clause end in present" },
+  reflexive: { label: "Reflexive verbs", description: "use reflexive pronouns (mich/dich/...)" }
+};
+
+const conjugationVerbCatalog = {
+  regular: [
+    {
+      id: "lernen",
+      infinitive: "lernen",
+      english: "to learn",
+      stem: "lern",
+      perfectAux: "haben",
+      participle: "gelernt",
+      defaultMode: "akkusativ",
+      accObject: { de: "Deutsch", en: "German" },
+      note: "Regular -en verb."
+    },
+    {
+      id: "machen",
+      infinitive: "machen",
+      english: "to do / make",
+      stem: "mach",
+      perfectAux: "haben",
+      participle: "gemacht",
+      defaultMode: "akkusativ",
+      accObject: { de: "die Hausaufgabe", en: "the homework" },
+      note: "Regular verb used often in beginner sentences."
+    },
+    {
+      id: "kaufen",
+      infinitive: "kaufen",
+      english: "to buy",
+      stem: "kauf",
+      perfectAux: "haben",
+      participle: "gekauft",
+      defaultMode: "akkusativ",
+      accObject: { de: "ein Ticket", en: "a ticket" },
+      note: "Great for Nominativ + Akkusativ practice."
+    }
+  ],
+  stem: [
+    {
+      id: "lesen",
+      infinitive: "lesen",
+      english: "to read",
+      present: {
+        ich: "lese",
+        du: "liest",
+        er: "liest",
+        wir: "lesen",
+        ihr: "lest",
+        sie: "lesen"
+      },
+      perfectAux: "haben",
+      participle: "gelesen",
+      defaultMode: "akkusativ",
+      accObject: { de: "das Buch", en: "the book" },
+      note: "Stem change in du/er: e -> ie."
+    },
+    {
+      id: "fahren",
+      infinitive: "fahren",
+      english: "to drive / go",
+      present: {
+        ich: "fahre",
+        du: "fährst",
+        er: "fährt",
+        wir: "fahren",
+        ihr: "fahrt",
+        sie: "fahren"
+      },
+      perfectAux: "sein",
+      participle: "gefahren",
+      defaultMode: "nominativ",
+      complement: { de: "nach Berlin", en: "to Berlin" },
+      note: "Stem change in du/er: a -> ä."
+    }
+  ],
+  irregular: [
+    {
+      id: "sein",
+      infinitive: "sein",
+      english: "to be",
+      present: {
+        ich: "bin",
+        du: "bist",
+        er: "ist",
+        wir: "sind",
+        ihr: "seid",
+        sie: "sind"
+      },
+      perfectAux: "sein",
+      participle: "gewesen",
+      defaultMode: "nominativ",
+      complement: { de: "müde", en: "tired" },
+      note: "Most important irregular verb."
+    },
+    {
+      id: "haben",
+      infinitive: "haben",
+      english: "to have",
+      present: {
+        ich: "habe",
+        du: "hast",
+        er: "hat",
+        wir: "haben",
+        ihr: "habt",
+        sie: "haben"
+      },
+      perfectAux: "haben",
+      participle: "gehabt",
+      defaultMode: "akkusativ",
+      accObject: { de: "Zeit", en: "time" },
+      note: "Core verb for possession and auxiliary use."
+    }
+  ],
+  modal: [
+    {
+      id: "können",
+      infinitive: "können",
+      english: "to be able to / can",
+      present: {
+        ich: "kann",
+        du: "kannst",
+        er: "kann",
+        wir: "können",
+        ihr: "könnt",
+        sie: "können"
+      },
+      perfectAux: "haben",
+      participle: "gekonnt",
+      defaultMode: "nominativ",
+      complement: { de: "Deutsch sprechen", en: "speak German" },
+      note: "Modal verb; often combined with another infinitive."
+    },
+    {
+      id: "müssen",
+      infinitive: "müssen",
+      english: "to have to / must",
+      present: {
+        ich: "muss",
+        du: "musst",
+        er: "muss",
+        wir: "müssen",
+        ihr: "müsst",
+        sie: "müssen"
+      },
+      perfectAux: "haben",
+      participle: "gemusst",
+      defaultMode: "nominativ",
+      complement: { de: "früh aufstehen", en: "get up early" },
+      note: "Modal verb with changed vowel in singular."
+    }
+  ],
+  separable: [
+    {
+      id: "aufstehen",
+      infinitive: "aufstehen",
+      english: "to get up",
+      stem: "steh",
+      prefix: "auf",
+      perfectAux: "sein",
+      participle: "aufgestanden",
+      defaultMode: "nominativ",
+      complement: { de: "um sieben Uhr", en: "at seven o'clock" },
+      note: "Prefix moves to the end in present main clauses."
+    },
+    {
+      id: "einkaufen",
+      infinitive: "einkaufen",
+      english: "to shop",
+      stem: "kauf",
+      prefix: "ein",
+      perfectAux: "haben",
+      participle: "eingekauft",
+      defaultMode: "akkusativ",
+      accObject: { de: "Obst", en: "fruit" },
+      note: "Separable verb with common daily-use meaning."
+    }
+  ],
+  reflexive: [
+    {
+      id: "sich_erinnern",
+      infinitive: "sich erinnern",
+      english: "to remember",
+      stem: "erinner",
+      reflexive: true,
+      perfectAux: "haben",
+      participle: "erinnert",
+      defaultMode: "nominativ",
+      complement: { de: "an den Termin", en: "about the appointment" },
+      note: "Reflexive pronoun changes with subject."
+    },
+    {
+      id: "sich_freuen",
+      infinitive: "sich freuen",
+      english: "to be happy / look forward",
+      stem: "freu",
+      reflexive: true,
+      perfectAux: "haben",
+      participle: "gefreut",
+      defaultMode: "nominativ",
+      complement: { de: "auf den Urlaub", en: "about the vacation" },
+      note: "Common reflexive verb in spoken German."
+    }
+  ]
+};
+
 const possessiveOwnerMap = {
   ich: { stem: "mein", label: "my" },
   du: { stem: "dein", label: "your (informal singular)" },
@@ -437,6 +818,22 @@ const accQuizCheckBtn = document.getElementById("acc-quiz-check");
 const accQuizNextBtn = document.getElementById("acc-quiz-next");
 const accQuizResetBtn = document.getElementById("acc-quiz-reset");
 
+const conjStepProgress = document.getElementById("conj-step-progress");
+const conjStepperDots = document.getElementById("conj-stepper-dots");
+const conjStepContent = document.getElementById("conj-step-content");
+const conjPrevStepBtn = document.getElementById("conj-prev-step");
+const conjNextStepBtn = document.getElementById("conj-next-step");
+const conjTypeSelect = document.getElementById("conj-type-select");
+const conjVerbSelect = document.getElementById("conj-verb-select");
+const conjTenseSelect = document.getElementById("conj-tense-select");
+const conjSubjectSelect = document.getElementById("conj-subject-select");
+const conjPatternSelect = document.getElementById("conj-pattern-select");
+const conjBuilderResult = document.getElementById("conj-builder-result");
+const conjConjugationTable = document.getElementById("conj-conjugation-table");
+const conjRoadmapProgress = document.getElementById("conj-roadmap-progress");
+const conjRoadmapList = document.getElementById("conj-roadmap-list");
+const conjugationPanel = document.getElementById("panel-conjugation");
+
 const posStepProgress = document.getElementById("pos-step-progress");
 const posStepperDots = document.getElementById("pos-stepper-dots");
 const posStepContent = document.getElementById("pos-step-content");
@@ -511,6 +908,22 @@ const sentenceIssuesList = document.getElementById("sentence-issues-list");
 const sentenceAlternativesList = document.getElementById("sentence-alternatives-list");
 const sentenceHistoryList = document.getElementById("sentence-history-list");
 const sentenceHistoryClearBtn = document.getElementById("sentence-history-clear-btn");
+const keyboardPanel = document.getElementById("panel-keyboard");
+const keyboardInput = document.getElementById("keyboard-input");
+const keyboardOutput = document.getElementById("keyboard-output");
+const keyboardStatus = document.getElementById("keyboard-status");
+const keyboardChanges = document.getElementById("keyboard-changes");
+const keyboardLayout = document.getElementById("keyboard-layout");
+const keyboardConvertBtn = document.getElementById("keyboard-convert-btn");
+const keyboardFixBtn = document.getElementById("keyboard-fix-btn");
+const keyboardCopyBtn = document.getElementById("keyboard-copy-btn");
+const keyboardClearBtn = document.getElementById("keyboard-clear-btn");
+const keyboardOutputActions = document.getElementById("keyboard-output-actions");
+const keyboardLiveAssistBtn = document.getElementById("keyboard-live-assist-btn");
+const keyboardSensitivityToggle = document.getElementById("keyboard-sensitivity-toggle");
+const keyboardSensitivityHelp = document.getElementById("keyboard-sensitivity-help");
+const keyboardSuggestions = document.getElementById("keyboard-suggestions");
+const keyboardQuickPhrases = document.getElementById("keyboard-quick-phrases");
 
 let activeFilter = "all";
 let highlightedWord = null;
@@ -519,9 +932,18 @@ let genderBatchMode = "simple";
 let latestGenderBatchRequest = 0;
 let genderBatchTags = [];
 const genderBatchLookupCache = new Map();
+const verbConjugationPronounOrder = ["ich", "du", "er/sie/es", "wir", "ihr", "sie/Sie"];
+const verbConjugationTenseOrder = ["Präsens", "Präteritum", "Perfekt", "Plusquamperfekt"];
 
 let currentAccusativeStep = 0;
 const accusativeStepState = accusativeSteps.map(() => ({
+  selectedIndex: null,
+  checked: false,
+  completed: false
+}));
+
+let currentConjugationStep = 0;
+const conjugationStepState = conjugationLessons.map(() => ({
   selectedIndex: null,
   checked: false,
   completed: false
@@ -557,11 +979,20 @@ let latestSentenceValidateRequest = 0;
 let sentenceTranslateDebounceTimer = null;
 let sentenceValidationMode = "grammar";
 let sentenceHistory = [];
+let keyboardLiveAssistEnabled = true;
+let keyboardSensitivity = "medium";
 
 const SENTENCE_HISTORY_STORAGE_KEY = "germanLearningSentenceHistoryV1";
 const SENTENCE_HISTORY_LIMIT = 18;
 const GENDER_BATCH_TAG_LIMIT = 10;
 const NUMBERS_MAX_VALUE = 999;
+const appConfig = (typeof window !== "undefined" && window.APP_CONFIG && typeof window.APP_CONFIG === "object")
+  ? window.APP_CONFIG
+  : {};
+const API_BASE_URL = String(appConfig.API_BASE_URL || "")
+  .trim()
+  .replace(/\/+$/, "");
+const USE_EXTERNAL_API = Boolean(API_BASE_URL);
 
 const genderLabels = {
   masculine: "Masculine",
@@ -654,10 +1085,150 @@ const numbersDateTopicTemplates = {
   }
 };
 
+const keyboardGermanWordFixMap = new Map(Object.entries({
+  strasse: "straße",
+  grosse: "große",
+  gross: "groß",
+  gruess: "grüß",
+  gruss: "gruß",
+  gruesse: "grüße",
+  heisse: "heiße",
+  heissen: "heißen",
+  heiss: "heiß",
+  weiss: "weiß",
+  ausser: "außer",
+  fuer: "für",
+  ueber: "über",
+  schoen: "schön",
+  moechte: "möchte",
+  koennen: "können",
+  muessen: "müssen",
+  duerfen: "dürfen",
+  fuesse: "füße",
+  muenchen: "münchen",
+  koeln: "köln",
+  froehlich: "fröhlich"
+}));
+
+const virtualGermanKeyboardRows = [
+  ["q", "w", "e", "r", "t", "z", "u", "i", "o", "p", "ü"],
+  ["a", "s", "d", "f", "g", "h", "j", "k", "l", "ö", "ä"],
+  ["y", "x", "c", "v", "b", "n", "m", "ß"],
+  ["Ä", "Ö", "Ü", "ẞ", ",", ".", "?", "!", "-"],
+  [
+    { label: "Space", value: " ", classes: ["vk-key--extra-wide", "vk-key--action"] },
+    { label: "Enter", action: "newline", classes: ["vk-key--wide", "vk-key--action"] },
+    { label: "Backspace", action: "backspace", classes: ["vk-key--wide", "vk-key--action"] }
+  ]
+];
+
+const keyboardSensitivityProfiles = {
+  low: {
+    label: "Low",
+    helpText: "Low keeps only basic conversion support and very light checks.",
+    useWordFixMap: true,
+    capitalizeSentenceStarts: false,
+    capitalizeKnownNouns: false,
+    maxSuggestions: 2,
+    maxDistance: 0
+  },
+  medium: {
+    label: "Medium",
+    helpText: "Medium keeps corrections balanced for regular class writing.",
+    useWordFixMap: true,
+    capitalizeSentenceStarts: true,
+    capitalizeKnownNouns: false,
+    maxSuggestions: 5,
+    maxDistance: 1
+  },
+  high: {
+    label: "High",
+    helpText: "High adds stricter spelling checks and noun capitalization support.",
+    useWordFixMap: true,
+    capitalizeSentenceStarts: true,
+    capitalizeKnownNouns: true,
+    maxSuggestions: 8,
+    maxDistance: 2
+  }
+};
+
+const keyboardClassroomPhraseLibrary = [
+  {
+    de: "Entschuldigung, können Sie das bitte wiederholen?",
+    en: "Excuse me, could you repeat that please?"
+  },
+  {
+    de: "Können Sie das bitte langsamer sagen?",
+    en: "Could you please say that more slowly?"
+  },
+  {
+    de: "Ich habe eine Frage.",
+    en: "I have a question."
+  },
+  {
+    de: "Ich habe das nicht verstanden.",
+    en: "I did not understand that."
+  },
+  {
+    de: "Wie schreibt man das auf Deutsch?",
+    en: "How do you write that in German?"
+  },
+  {
+    de: "Können Sie ein Beispiel geben?",
+    en: "Could you give an example?"
+  },
+  {
+    de: "Was bedeutet das auf Englisch?",
+    en: "What does that mean in English?"
+  },
+  {
+    de: "Darf ich kurz auf die Toilette gehen?",
+    en: "May I quickly go to the restroom?"
+  }
+];
+
+const keyboardAltShortcutCharMap = new Map(Object.entries({
+  a: { normal: "ä", shifted: "Ä" },
+  o: { normal: "ö", shifted: "Ö" },
+  u: { normal: "ü", shifted: "Ü" },
+  s: { normal: "ß", shifted: "ẞ" }
+}));
+
+const keyboardVocabularyDisplayMap = new Map();
+const keyboardNounVocabularySet = new Set();
+let keyboardVocabularyIndex = [];
+
 const localWordMap = new Map();
 for (const entry of words) {
   localWordMap.set(normalizeWord(entry.word), entry);
 }
+
+const localPluralFallbackMap = new Map(Object.entries({
+  tisch: { forms: ["Tische"] },
+  stuhl: { forms: ["Stühle"] },
+  apfel: { forms: ["Äpfel"] },
+  lehrer: { forms: ["Lehrer"] },
+  hund: { forms: ["Hunde"] },
+  tag: { forms: ["Tage"] },
+  zug: { forms: ["Züge"] },
+  computer: { forms: ["Computer"] },
+  frau: { forms: ["Frauen"] },
+  tasche: { forms: ["Taschen"] },
+  schule: { forms: ["Schulen"] },
+  lampe: { forms: ["Lampen"] },
+  zeitung: { forms: ["Zeitungen"] },
+  stadt: { forms: ["Städte"] },
+  milch: { noPlural: true },
+  musik: { noPlural: true },
+  haus: { forms: ["Häuser"] },
+  kind: { forms: ["Kinder"] },
+  auto: { forms: ["Autos"] },
+  buch: { forms: ["Bücher"] },
+  wasser: { forms: ["Wasser", "Wässer"] },
+  fenster: { forms: ["Fenster"] },
+  mädchen: { forms: ["Mädchen"] },
+  telefon: { forms: ["Telefone"] }
+}));
 
 function normalizeWord(value) {
   return String(value || "")
@@ -680,6 +1251,231 @@ function findSimilarWords(value) {
   return words
     .filter((entry) => entry.word.toLowerCase().includes(normalized))
     .slice(0, 5);
+}
+
+function extractGermanWordTokens(value) {
+  return String(value || "").match(/[A-Za-zÄÖÜäöüßẞ]+/g) || [];
+}
+
+function normalizeGermanToken(value) {
+  return String(value || "")
+    .replace(/[^A-Za-zÄÖÜäöüßẞ]/g, "")
+    .toLocaleLowerCase("de-DE")
+    .trim()
+    .normalize("NFC");
+}
+
+function isCapitalizedWord(value) {
+  const text = String(value || "");
+  if (!text) return false;
+  const first = text[0];
+  return first === first.toLocaleUpperCase("de-DE") && first !== first.toLocaleLowerCase("de-DE");
+}
+
+function addKeyboardVocabularyToken(token, options = {}) {
+  const normalized = normalizeGermanToken(token);
+  if (!normalized) return;
+
+  const safeToken = String(token || "").trim();
+  if (!safeToken) return;
+
+  const previous = keyboardVocabularyDisplayMap.get(normalized);
+  if (!previous) {
+    keyboardVocabularyDisplayMap.set(normalized, safeToken);
+  } else {
+    const preferNew = isCapitalizedWord(safeToken) && !isCapitalizedWord(previous);
+    if (preferNew) {
+      keyboardVocabularyDisplayMap.set(normalized, safeToken);
+    }
+  }
+
+  if (options.isNoun) {
+    keyboardNounVocabularySet.add(normalized);
+  }
+}
+
+function addKeyboardVocabularyTerms(value, options = {}) {
+  const tokens = extractGermanWordTokens(value);
+  tokens.forEach((token) => {
+    addKeyboardVocabularyToken(token, options);
+  });
+}
+
+function buildKeyboardVocabularyIndex() {
+  keyboardVocabularyDisplayMap.clear();
+  keyboardNounVocabularySet.clear();
+
+  words.forEach((entry) => {
+    addKeyboardVocabularyTerms(entry.word, { isNoun: true });
+  });
+
+  for (const info of localPluralFallbackMap.values()) {
+    const forms = Array.isArray(info?.forms) ? info.forms : [];
+    const phrases = Array.isArray(info?.phrases) ? info.phrases : [];
+    forms.forEach((form) => {
+      addKeyboardVocabularyTerms(form, { isNoun: true });
+    });
+    phrases.forEach((phrase) => {
+      addKeyboardVocabularyTerms(phrase, { isNoun: true });
+    });
+  }
+
+  for (const [source, target] of keyboardGermanWordFixMap.entries()) {
+    addKeyboardVocabularyTerms(source);
+    addKeyboardVocabularyTerms(target);
+  }
+
+  Object.values(conjugationVerbCatalog).forEach((verbList) => {
+    (Array.isArray(verbList) ? verbList : []).forEach((verb) => {
+      addKeyboardVocabularyTerms(verb?.infinitive);
+      addKeyboardVocabularyTerms(verb?.participle);
+      if (verb?.present && typeof verb.present === "object") {
+        Object.values(verb.present).forEach((form) => {
+          addKeyboardVocabularyTerms(form);
+        });
+      }
+    });
+  });
+
+  keyboardClassroomPhraseLibrary.forEach((phrase) => {
+    addKeyboardVocabularyTerms(phrase?.de);
+  });
+
+  keyboardVocabularyIndex = Array.from(keyboardVocabularyDisplayMap.keys());
+}
+
+function getKeyboardSensitivityProfile(level = keyboardSensitivity) {
+  if (level && keyboardSensitivityProfiles[level]) {
+    return keyboardSensitivityProfiles[level];
+  }
+  return keyboardSensitivityProfiles.medium;
+}
+
+function updateKeyboardSensitivityButtons() {
+  if (!keyboardSensitivityToggle) return;
+
+  const buttons = Array.from(keyboardSensitivityToggle.querySelectorAll("[data-keyboard-sensitivity]"));
+  buttons.forEach((button) => {
+    const isActive = button.dataset.keyboardSensitivity === keyboardSensitivity;
+    button.classList.toggle("is-active", isActive);
+    button.classList.toggle("filter-btn--ghost", !isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  });
+
+  if (keyboardSensitivityHelp) {
+    keyboardSensitivityHelp.textContent = getKeyboardSensitivityProfile().helpText;
+  }
+}
+
+function updateKeyboardLiveAssistButton() {
+  if (!keyboardLiveAssistBtn) return;
+
+  keyboardLiveAssistBtn.textContent = keyboardLiveAssistEnabled
+    ? "Live Assist: ON"
+    : "Live Assist: OFF";
+  keyboardLiveAssistBtn.classList.toggle("is-active", keyboardLiveAssistEnabled);
+  keyboardLiveAssistBtn.classList.toggle("filter-btn--ghost", !keyboardLiveAssistEnabled);
+  keyboardLiveAssistBtn.setAttribute("aria-pressed", String(keyboardLiveAssistEnabled));
+}
+
+function setKeyboardSensitivity(level) {
+  keyboardSensitivity = keyboardSensitivityProfiles[level] ? level : "medium";
+  updateKeyboardSensitivityButtons();
+  renderKeyboardOutputPreview();
+}
+
+function setKeyboardLiveAssistEnabled(enabled) {
+  keyboardLiveAssistEnabled = Boolean(enabled);
+  updateKeyboardLiveAssistButton();
+  renderKeyboardOutputPreview();
+}
+
+function uniqueNonEmptyStrings(values) {
+  const seen = new Set();
+  const output = [];
+
+  for (const value of values || []) {
+    const normalized = String(value || "").trim();
+    if (!normalized) continue;
+    const key = normalized.toLocaleLowerCase("de-DE");
+    if (seen.has(key)) continue;
+    seen.add(key);
+    output.push(normalized);
+  }
+
+  return output;
+}
+
+function normalizePluralSurfaceClient(value) {
+  const cleaned = String(value || "")
+    .trim()
+    .replace(/^(der|die|das)\s+/i, "")
+    .replace(/[.,;:]+$/g, "")
+    .replace(/\s+/g, " ");
+  return cleaned || null;
+}
+
+function normalizePluralInfo(input) {
+  if (!input || typeof input !== "object") return null;
+
+  const formsFromPayload = Array.isArray(input.forms)
+    ? input.forms
+    : (Array.isArray(input.pluralForms) ? input.pluralForms : []);
+  const phrasesFromPayload = Array.isArray(input.phrases)
+    ? input.phrases
+    : (Array.isArray(input.withArticle) ? input.withArticle : []);
+
+  const forms = uniqueNonEmptyStrings(formsFromPayload
+    .map(normalizePluralSurfaceClient)
+    .filter(Boolean));
+  const phrases = uniqueNonEmptyStrings(phrasesFromPayload.map((phrase) => String(phrase || "").trim()));
+
+  if (phrases.length === 0 && forms.length > 0) {
+    for (const form of forms) {
+      phrases.push(`die ${form}`);
+    }
+  }
+
+  if (forms.length === 0 && phrases.length > 0) {
+    for (const phrase of phrases) {
+      const normalized = normalizePluralSurfaceClient(phrase);
+      if (normalized) forms.push(normalized);
+    }
+  }
+
+  const noPlural = Boolean(input.noPlural) && forms.length === 0 && phrases.length === 0;
+  if (forms.length === 0 && phrases.length === 0 && !noPlural) {
+    return null;
+  }
+
+  return {
+    forms,
+    phrases: uniqueNonEmptyStrings(phrases),
+    noPlural
+  };
+}
+
+function getLocalPluralInfo(entryOrWord) {
+  const key = normalizeWord(typeof entryOrWord === "string" ? entryOrWord : entryOrWord?.word);
+  if (!key) return null;
+  return normalizePluralInfo(localPluralFallbackMap.get(key) || null);
+}
+
+function buildPluralLineText(pluralInfo) {
+  if (!pluralInfo) {
+    return "Plural: not available yet";
+  }
+
+  if (pluralInfo.noPlural) {
+    return "Plural: usually no common plural form";
+  }
+
+  const pluralPhrases = Array.isArray(pluralInfo.phrases) ? pluralInfo.phrases.filter(Boolean) : [];
+  if (pluralPhrases.length === 0) {
+    return "Plural: not available yet";
+  }
+
+  return `Plural: ${pluralPhrases.join(" / ")}`;
 }
 
 function escapeHtml(value) {
@@ -745,11 +1541,594 @@ function buildSpeakButtonHtml(text, label) {
   `;
 }
 
+function buildApiUrl(pathname, params = {}) {
+  const normalizedPath = pathname.startsWith("/") ? pathname : `/${pathname}`;
+  const basePath = USE_EXTERNAL_API ? `${API_BASE_URL}${normalizedPath}` : normalizedPath;
+  const url = new URL(basePath, window.location.origin);
+
+  for (const [key, value] of Object.entries(params || {})) {
+    if (value === null || value === undefined || value === "") continue;
+    url.searchParams.set(key, String(value));
+  }
+
+  if (USE_EXTERNAL_API) {
+    return url.toString();
+  }
+
+  return `${url.pathname}${url.search}`;
+}
+
 function normalizeSentenceInputClient(value) {
   return String(value || "")
     .replace(/\s+/g, " ")
     .trim()
     .normalize("NFC");
+}
+
+function preserveWordCase(sourceWord, targetWord) {
+  const source = String(sourceWord || "");
+  const target = String(targetWord || "");
+  if (!source || !target) return target;
+
+  if (source === source.toLocaleUpperCase("de-DE")) {
+    return target.toLocaleUpperCase("de-DE");
+  }
+
+  const first = source[0];
+  if (first && first === first.toLocaleUpperCase("de-DE")) {
+    return `${target[0]?.toLocaleUpperCase("de-DE") || ""}${target.slice(1)}`;
+  }
+
+  return target;
+}
+
+function convertEnglishStyleWordToGerman(word, options = {}) {
+  const rawWord = String(word || "");
+  if (!rawWord) return rawWord;
+
+  const shouldUseWordFixMap = options.useWordFixMap !== false;
+  const lower = rawWord.toLocaleLowerCase("de-DE");
+  if (shouldUseWordFixMap && keyboardGermanWordFixMap.has(lower)) {
+    const mapped = keyboardGermanWordFixMap.get(lower);
+    return preserveWordCase(rawWord, mapped);
+  }
+
+  let transformed = rawWord;
+  transformed = transformed
+    .replace(/Ae/g, "Ä")
+    .replace(/Oe/g, "Ö")
+    .replace(/Ue/g, "Ü")
+    .replace(/ae/g, "ä")
+    .replace(/oe/g, "ö")
+    .replace(/ue/g, "ü");
+
+  if (transformed !== rawWord) {
+    return transformed;
+  }
+
+  return rawWord;
+}
+
+function convertEnglishStyleGermanText(text, options = {}) {
+  const source = String(text || "");
+  const changes = [];
+
+  const converted = source.replace(/\b[A-Za-zÄÖÜäöüßẞ]+\b/g, (word) => {
+    const next = convertEnglishStyleWordToGerman(word, options);
+    if (next !== word) {
+      changes.push(`${word} -> ${next}`);
+    }
+    return next;
+  });
+
+  return {
+    text: converted.normalize("NFC"),
+    changes: uniqueNonEmptyStrings(changes)
+  };
+}
+
+function correctMinorGermanMistakes(text, options = {}) {
+  const settings = {
+    punctuationSpacing: options.punctuationSpacing !== false,
+    collapseSpaces: options.collapseSpaces !== false,
+    trimValue: options.trimValue !== false,
+    capitalizeSentenceStarts: options.capitalizeSentenceStarts !== false,
+    capitalizeKnownNouns: Boolean(options.capitalizeKnownNouns)
+  };
+
+  let value = String(text || "");
+  const changes = [];
+
+  if (settings.punctuationSpacing) {
+    const beforePunctuation = value;
+    value = value.replace(/\s+([,.;:!?])/g, "$1");
+    if (value !== beforePunctuation) {
+      changes.push("Removed extra spaces before punctuation.");
+    }
+
+    const spacingAfterPunctuation = value;
+    value = value.replace(/([,.;:!?])([^\s\n])/g, "$1 $2");
+    if (value !== spacingAfterPunctuation) {
+      changes.push("Added missing spaces after punctuation.");
+    }
+  }
+
+  if (settings.collapseSpaces) {
+    const collapseSpaces = value;
+    value = value.replace(/[ \t]{2,}/g, " ");
+    if (settings.trimValue) {
+      value = value.trim();
+    }
+    if (value !== collapseSpaces) {
+      changes.push("Collapsed repeated spaces.");
+    }
+  } else if (settings.trimValue) {
+    value = value.trim();
+  }
+
+  if (settings.capitalizeSentenceStarts) {
+    const sentenceCase = value;
+    value = value.replace(/(^|[.!?]\s+)([a-zäöü])/g, (match, prefix, letter) => (
+      `${prefix}${letter.toLocaleUpperCase("de-DE")}`
+    ));
+    if (value !== sentenceCase) {
+      changes.push("Capitalized sentence starts.");
+    }
+  }
+
+  if (settings.capitalizeKnownNouns) {
+    const nounExamples = [];
+    const nounCase = value;
+    value = value.replace(/\b[A-Za-zÄÖÜäöüßẞ]+\b/g, (word) => {
+      const normalized = normalizeGermanToken(word);
+      if (!normalized || !keyboardNounVocabularySet.has(normalized) || isCapitalizedWord(word)) {
+        return word;
+      }
+      const next = `${word[0]?.toLocaleUpperCase("de-DE") || ""}${word.slice(1)}`;
+      if (nounExamples.length < 3 && next !== word) {
+        nounExamples.push(`${word} -> ${next}`);
+      }
+      return next;
+    });
+    if (value !== nounCase) {
+      const note = nounExamples.length > 0
+        ? `Capitalized common nouns (${nounExamples.join(", ")}).`
+        : "Capitalized common nouns.";
+      changes.push(note);
+    }
+  }
+
+  return {
+    text: value.normalize("NFC"),
+    changes: uniqueNonEmptyStrings(changes)
+  };
+}
+
+function transformKeyboardText(rawText, options = {}) {
+  const profile = getKeyboardSensitivityProfile(options.sensitivity || keyboardSensitivity);
+  const conversion = convertEnglishStyleGermanText(rawText, {
+    useWordFixMap: profile.useWordFixMap
+  });
+  const correction = correctMinorGermanMistakes(conversion.text, {
+    capitalizeSentenceStarts: profile.capitalizeSentenceStarts,
+    capitalizeKnownNouns: profile.capitalizeKnownNouns
+  });
+  return {
+    text: correction.text,
+    changes: uniqueNonEmptyStrings([...(conversion.changes || []), ...(correction.changes || [])])
+  };
+}
+
+function escapeRegExp(value) {
+  return String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function levenshteinDistance(a, b) {
+  const left = String(a || "");
+  const right = String(b || "");
+  if (left === right) return 0;
+  if (!left.length) return right.length;
+  if (!right.length) return left.length;
+
+  const previous = new Array(right.length + 1);
+  const current = new Array(right.length + 1);
+
+  for (let j = 0; j <= right.length; j += 1) {
+    previous[j] = j;
+  }
+
+  for (let i = 1; i <= left.length; i += 1) {
+    current[0] = i;
+    for (let j = 1; j <= right.length; j += 1) {
+      const substitutionCost = left[i - 1] === right[j - 1] ? 0 : 1;
+      current[j] = Math.min(
+        current[j - 1] + 1,
+        previous[j] + 1,
+        previous[j - 1] + substitutionCost
+      );
+    }
+    for (let j = 0; j <= right.length; j += 1) {
+      previous[j] = current[j];
+    }
+  }
+
+  return previous[right.length];
+}
+
+function findClosestKeyboardWord(word, maxDistance) {
+  const token = normalizeGermanToken(word);
+  if (!token || maxDistance <= 0 || keyboardVocabularyIndex.length === 0) {
+    return null;
+  }
+
+  let best = null;
+  for (const candidate of keyboardVocabularyIndex) {
+    const lengthDiff = Math.abs(candidate.length - token.length);
+    if (lengthDiff > maxDistance) continue;
+    if (maxDistance <= 1 && candidate[0] !== token[0]) continue;
+
+    const distance = levenshteinDistance(token, candidate);
+    if (distance > maxDistance) continue;
+
+    if (!best || distance < best.distance || (distance === best.distance && candidate.length < best.word.length)) {
+      best = {
+        word: candidate,
+        distance,
+        display: keyboardVocabularyDisplayMap.get(candidate) || candidate
+      };
+    }
+  }
+
+  return best;
+}
+
+function buildKeyboardSmartSuggestions(rawText, level = keyboardSensitivity) {
+  const profile = getKeyboardSensitivityProfile(level);
+  const suggestions = [];
+  const seen = new Set();
+  const textWords = extractGermanWordTokens(rawText);
+
+  const pushSuggestion = (from, to, reason) => {
+    const source = String(from || "").trim();
+    const target = String(to || "").trim();
+    if (!source || !target || source === target) return;
+
+    const key = `${source.toLocaleLowerCase("de-DE")}::${target.toLocaleLowerCase("de-DE")}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    suggestions.push({ from: source, to: target, reason });
+  };
+
+  for (const word of textWords) {
+    if (suggestions.length >= profile.maxSuggestions) break;
+    const converted = convertEnglishStyleWordToGerman(word, { useWordFixMap: true });
+
+    if (converted !== word) {
+      pushSuggestion(word, converted, "German spelling update.");
+      if (suggestions.length >= profile.maxSuggestions) break;
+    }
+
+    const normalizedConverted = normalizeGermanToken(converted);
+    if (!normalizedConverted || normalizedConverted.length < 3) continue;
+
+    if (profile.capitalizeKnownNouns && keyboardNounVocabularySet.has(normalizedConverted) && !isCapitalizedWord(converted)) {
+      const nounVersion = `${converted[0]?.toLocaleUpperCase("de-DE") || ""}${converted.slice(1)}`;
+      pushSuggestion(word, nounVersion, "Nouns are capitalized in German.");
+      if (suggestions.length >= profile.maxSuggestions) break;
+    }
+
+    if (profile.maxDistance <= 0 || keyboardVocabularyDisplayMap.has(normalizedConverted)) continue;
+
+    const closest = findClosestKeyboardWord(normalizedConverted, profile.maxDistance);
+    if (!closest) continue;
+
+    const match = preserveWordCase(converted, closest.display);
+    if (normalizeGermanToken(match) === normalizedConverted) continue;
+    pushSuggestion(word, match, "Close spelling match.");
+  }
+
+  return suggestions.slice(0, profile.maxSuggestions);
+}
+
+function renderKeyboardSuggestions(items) {
+  if (!keyboardSuggestions) return;
+
+  const list = Array.isArray(items) ? items.filter(Boolean) : [];
+  if (list.length === 0) {
+    const message = keyboardLiveAssistEnabled
+      ? "No urgent suggestions right now."
+      : "Turn Live Assist ON to get suggestions while typing.";
+    keyboardSuggestions.innerHTML = `<p class="muted keyboard-suggestions__empty">${escapeHtml(message)}</p>`;
+    return;
+  }
+
+  keyboardSuggestions.innerHTML = list.map((item) => `
+    <button
+      type="button"
+      class="keyboard-suggestion-btn"
+      data-keyboard-apply-from="${escapeHtml(item.from)}"
+      data-keyboard-apply-to="${escapeHtml(item.to)}"
+    >
+      <span class="keyboard-suggestion-btn__main">${escapeHtml(item.from)} -> ${escapeHtml(item.to)}</span>
+      <span class="keyboard-suggestion-btn__reason">${escapeHtml(item.reason || "Suggestion")}</span>
+    </button>
+  `).join("");
+}
+
+function renderKeyboardQuickPhrases() {
+  if (!keyboardQuickPhrases) return;
+
+  keyboardQuickPhrases.innerHTML = keyboardClassroomPhraseLibrary.map((item) => `
+    <div class="keyboard-quick-item">
+      <button type="button" class="keyboard-quick-btn" data-keyboard-phrase="${escapeHtml(item.de)}">
+        ${escapeHtml(item.de)}
+      </button>
+      ${buildSpeakButtonHtml(item.de, `Speak phrase: ${item.de}`)}
+      <p class="keyboard-quick-item__en">${escapeHtml(item.en)}</p>
+    </div>
+  `).join("");
+}
+
+function replaceGermanWordOccurrences(text, searchWord, replacementWord) {
+  const source = String(searchWord || "").trim();
+  if (!source) {
+    return { text: String(text || ""), replacements: 0 };
+  }
+
+  const pattern = new RegExp(
+    `(^|[^A-Za-zÄÖÜäöüßẞ])(${escapeRegExp(source)})(?=[^A-Za-zÄÖÜäöüßẞ]|$)`,
+    "gi"
+  );
+
+  let replacements = 0;
+  const updated = String(text || "").replace(pattern, (match, prefix, word) => {
+    replacements += 1;
+    return `${prefix}${preserveWordCase(word, replacementWord)}`;
+  });
+
+  return { text: updated, replacements };
+}
+
+function applyKeyboardSuggestion(from, to) {
+  if (!keyboardInput) return;
+
+  const source = String(from || "").trim();
+  const target = String(to || "").trim();
+  if (!source || !target) return;
+
+  const result = replaceGermanWordOccurrences(keyboardInput.value, source, target);
+  if (result.replacements === 0) return;
+
+  keyboardInput.value = result.text;
+  renderKeyboardOutputPreview();
+  keyboardInput.focus();
+
+  if (keyboardStatus) {
+    keyboardStatus.textContent = `Applied suggestion: ${source} -> ${target}.`;
+  }
+}
+
+function insertKeyboardQuickPhrase(phrase) {
+  if (!keyboardInput) return;
+
+  const text = String(phrase || "").trim();
+  if (!text) return;
+
+  const cursor = keyboardInput.selectionStart ?? keyboardInput.value.length;
+  const before = keyboardInput.value.slice(0, cursor);
+  const needsSpace = before.length > 0 && !/[\s\n]$/.test(before);
+  insertTextAtCursor(keyboardInput, `${needsSpace ? " " : ""}${text}`);
+  renderKeyboardOutputPreview();
+
+  if (keyboardStatus) {
+    keyboardStatus.textContent = "Quick class phrase inserted.";
+  }
+}
+
+function getKeyboardAltShortcutCharacter(event) {
+  if (!event || !event.altKey || event.ctrlKey || event.metaKey) return "";
+
+  const key = String(event.key || "");
+  if (!key) return "";
+  const normalized = key.toLocaleLowerCase("de-DE");
+  const mapping = keyboardAltShortcutCharMap.get(normalized);
+  if (!mapping) return "";
+
+  return event.shiftKey ? mapping.shifted : mapping.normal;
+}
+
+function renderKeyboardChanges(changeItems) {
+  if (!keyboardChanges) return;
+  const items = Array.isArray(changeItems) ? changeItems.filter(Boolean) : [];
+
+  if (items.length === 0) {
+    keyboardChanges.innerHTML = "<li>No corrections needed yet.</li>";
+    return;
+  }
+
+  keyboardChanges.innerHTML = items
+    .slice(0, 10)
+    .map((item) => `<li>${escapeHtml(item)}</li>`)
+    .join("");
+}
+
+function renderKeyboardOutputPreview() {
+  if (!keyboardInput || !keyboardOutput) return;
+
+  const rawText = String(keyboardInput.value || "");
+  const profile = getKeyboardSensitivityProfile();
+  const result = keyboardLiveAssistEnabled
+    ? transformKeyboardText(rawText, { sensitivity: keyboardSensitivity })
+    : { text: rawText.normalize("NFC"), changes: [] };
+  const suggestions = buildKeyboardSmartSuggestions(rawText, keyboardSensitivity);
+  keyboardOutput.value = result.text;
+  renderKeyboardChanges(result.changes);
+  renderKeyboardSuggestions(suggestions);
+
+  if (keyboardStatus) {
+    if (!rawText.trim()) {
+      keyboardStatus.textContent = "Type text to see live German conversion and fixes.";
+    } else if (!keyboardLiveAssistEnabled) {
+      keyboardStatus.textContent = `Live Assist is OFF. Turn it ON for instant ${profile.label.toLowerCase()} support.`;
+    } else if (result.changes.length === 0) {
+      keyboardStatus.textContent = suggestions.length > 0
+        ? `Looks good. ${suggestions.length} quick suggestion${suggestions.length === 1 ? "" : "s"} available.`
+        : "Looks good. No corrections needed.";
+    } else {
+      keyboardStatus.textContent = `Live ${profile.label.toLowerCase()} assist applied ${result.changes.length} correction${result.changes.length === 1 ? "" : "s"}.`;
+    }
+  }
+
+  if (keyboardOutputActions) {
+    keyboardOutputActions.innerHTML = buildSpeakButtonHtml(result.text, "Speak German keyboard output");
+  }
+}
+
+function insertTextAtCursor(inputEl, value) {
+  if (!inputEl || typeof inputEl.value !== "string") return;
+
+  const start = inputEl.selectionStart ?? inputEl.value.length;
+  const end = inputEl.selectionEnd ?? inputEl.value.length;
+  const before = inputEl.value.slice(0, start);
+  const after = inputEl.value.slice(end);
+  const next = `${before}${value}${after}`;
+  inputEl.value = next;
+
+  const cursor = start + String(value).length;
+  inputEl.setSelectionRange(cursor, cursor);
+  inputEl.focus();
+}
+
+function handleVirtualKeyboardAction(action) {
+  if (!keyboardInput) return;
+  const start = keyboardInput.selectionStart ?? keyboardInput.value.length;
+  const end = keyboardInput.selectionEnd ?? keyboardInput.value.length;
+
+  if (action === "backspace") {
+    if (start !== end) {
+      keyboardInput.value = `${keyboardInput.value.slice(0, start)}${keyboardInput.value.slice(end)}`;
+      keyboardInput.setSelectionRange(start, start);
+    } else if (start > 0) {
+      keyboardInput.value = `${keyboardInput.value.slice(0, start - 1)}${keyboardInput.value.slice(start)}`;
+      keyboardInput.setSelectionRange(start - 1, start - 1);
+    }
+    keyboardInput.focus();
+    renderKeyboardOutputPreview();
+    return;
+  }
+
+  if (action === "newline") {
+    insertTextAtCursor(keyboardInput, "\n");
+    renderKeyboardOutputPreview();
+  }
+}
+
+function renderVirtualKeyboardLayout() {
+  if (!keyboardLayout) return;
+
+  keyboardLayout.innerHTML = virtualGermanKeyboardRows.map((row) => {
+    const keyButtons = row.map((key) => {
+      if (typeof key === "string") {
+        return `
+          <button type="button" class="vk-key" data-vk-value="${escapeHtml(key)}">
+            ${escapeHtml(key)}
+          </button>
+        `;
+      }
+
+      const classes = ["vk-key", ...(Array.isArray(key.classes) ? key.classes : [])].join(" ");
+      const valueAttr = key.value !== undefined ? `data-vk-value="${escapeHtml(String(key.value))}"` : "";
+      const actionAttr = key.action ? `data-vk-action="${escapeHtml(key.action)}"` : "";
+      return `
+        <button type="button" class="${escapeHtml(classes)}" ${valueAttr} ${actionAttr}>
+          ${escapeHtml(key.label || key.value || "")}
+        </button>
+      `;
+    }).join("");
+
+    return `<div class="virtual-keyboard__row">${keyButtons}</div>`;
+  }).join("");
+}
+
+function applyKeyboardEnglishToGermanConversion() {
+  if (!keyboardInput) return;
+  const before = String(keyboardInput.value || "");
+  const profile = getKeyboardSensitivityProfile();
+  const conversion = convertEnglishStyleGermanText(before, {
+    useWordFixMap: profile.useWordFixMap
+  });
+  keyboardInput.value = conversion.text;
+  renderKeyboardOutputPreview();
+  keyboardInput.focus();
+
+  if (keyboardStatus) {
+    keyboardStatus.textContent = conversion.changes.length > 0
+      ? `Converted ${conversion.changes.length} item${conversion.changes.length === 1 ? "" : "s"} to German spelling.`
+      : "No English-style spellings found to convert.";
+  }
+}
+
+function applyKeyboardMinorFixes() {
+  if (!keyboardInput) return;
+  const before = String(keyboardInput.value || "");
+  const profile = getKeyboardSensitivityProfile();
+  const correction = correctMinorGermanMistakes(before, {
+    capitalizeSentenceStarts: profile.capitalizeSentenceStarts,
+    capitalizeKnownNouns: profile.capitalizeKnownNouns
+  });
+  keyboardInput.value = correction.text;
+  renderKeyboardOutputPreview();
+  keyboardInput.focus();
+
+  if (keyboardStatus) {
+    keyboardStatus.textContent = correction.changes.length > 0
+      ? `Fixed ${correction.changes.length} small issue${correction.changes.length === 1 ? "" : "s"}.`
+      : "No small mistakes found.";
+  }
+}
+
+function clearKeyboardWorkbench() {
+  if (!keyboardInput || !keyboardOutput) return;
+  keyboardInput.value = "";
+  keyboardOutput.value = "";
+  renderKeyboardChanges([]);
+  renderKeyboardSuggestions([]);
+  if (keyboardOutputActions) {
+    keyboardOutputActions.innerHTML = "";
+  }
+  if (keyboardStatus) {
+    keyboardStatus.textContent = "Cleared. Type text to see live German conversion and fixes.";
+  }
+  keyboardInput.focus();
+}
+
+async function copyKeyboardOutputText() {
+  if (!keyboardOutput || !keyboardStatus) return;
+  const text = String(keyboardOutput.value || "").trim();
+  if (!text) {
+    keyboardStatus.textContent = "Nothing to copy yet.";
+    return;
+  }
+
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      keyboardStatus.textContent = "German output copied to clipboard.";
+      return;
+    }
+  } catch {
+    // fallback below
+  }
+
+  keyboardOutput.removeAttribute("readonly");
+  keyboardOutput.select();
+  const copied = typeof document.execCommand === "function"
+    ? document.execCommand("copy")
+    : false;
+  keyboardOutput.setAttribute("readonly", "readonly");
+  keyboardStatus.textContent = copied
+    ? "German output copied to clipboard."
+    : "Copy is not available in this browser.";
 }
 
 function canUseLocalStorage() {
@@ -1339,7 +2718,7 @@ function toAccusativeArticle(article) {
   return article === "der" ? "den" : article;
 }
 
-function buildGenderExampleSentences({ word, results, englishMeaning }) {
+function buildGenderExampleSentences({ word, results, englishMeaning, pluralInfo }) {
   if (!Array.isArray(results) || results.length === 0) return [];
 
   const articlePhrases = results.map((result) => `${result.article} ${word}`);
@@ -1363,7 +2742,7 @@ function buildGenderExampleSentences({ word, results, englishMeaning }) {
   const accusativePhrase = `${toAccusativeArticle(primary.article)} ${word}`;
   const english = englishMeaning ? String(englishMeaning).trim() : null;
 
-  return [
+  const sentences = [
     {
       de: `Das ist ${nominativePhrase}.`,
       en: english ? `This is the ${english}.` : "Simple example sentence with the noun."
@@ -1373,14 +2752,159 @@ function buildGenderExampleSentences({ word, results, englishMeaning }) {
       en: english ? `I know the ${english}.` : "Repeat this sentence to remember the article."
     }
   ];
+
+  if (pluralInfo?.noPlural) {
+    sentences.push({
+      de: "Dieses Wort hat meistens keinen Plural.",
+      en: "This word is usually uncountable and has no common plural form."
+    });
+  } else if (Array.isArray(pluralInfo?.phrases) && pluralInfo.phrases.length > 0) {
+    sentences.push({
+      de: `Im Plural sagt man: ${pluralInfo.phrases.join(" / ")}.`,
+      en: `Plural form: ${pluralInfo.phrases.join(" / ")}.`
+    });
+  }
+
+  return sentences;
 }
 
-function renderGenderStudyCard({ word, results, englishMeaning, noteText, highlightWordName }) {
+function formatVerbConjugationValue(value) {
+  if (!value) return "—";
+
+  if (typeof value === "string") {
+    const text = value.trim();
+    return text || "—";
+  }
+
+  const primary = String(value.primary || "").trim();
+  const variants = Array.isArray(value.variants)
+    ? uniqueNonEmptyStrings(value.variants.map((item) => String(item || "").trim()).filter(Boolean))
+    : [];
+  const extras = variants.filter((item) => item !== primary);
+
+  if (!primary && extras.length === 0) return "—";
+  if (!primary) return extras.join(" / ");
+  if (extras.length === 0) return primary;
+  return `${primary} (${extras.join(" / ")})`;
+}
+
+function hasVerbConjugationDataClient(payload) {
+  if (!payload || !payload.found) {
+    return false;
+  }
+
+  if (payload.infinitive) return true;
+  if (payload.participles?.partizipI || payload.participles?.partizipII) return true;
+
+  if (payload.imperative && typeof payload.imperative === "object") {
+    const hasImperative = Object.values(payload.imperative)
+      .some((value) => formatVerbConjugationValue(value) !== "—");
+    if (hasImperative) return true;
+  }
+
+  if (payload.tenses && typeof payload.tenses === "object") {
+    return Object.values(payload.tenses).some((forms) => {
+      if (!forms || typeof forms !== "object") return false;
+      return Object.values(forms).some((value) => formatVerbConjugationValue(value) !== "—");
+    });
+  }
+
+  return false;
+}
+
+function renderVerbTenseTableHtml(tenseLabel, forms) {
+  if (!forms || typeof forms !== "object") return "";
+
+  const rows = verbConjugationPronounOrder.map((pronoun) => ({
+    pronoun,
+    value: formatVerbConjugationValue(forms[pronoun])
+  }));
+  const hasAny = rows.some((row) => row.value !== "—");
+  if (!hasAny) return "";
+
+  return `
+    <article class="result-verb-tense">
+      <p class="result-verb-tense__label">${escapeHtml(tenseLabel)}</p>
+      <table class="result-verb-table" aria-label="${escapeHtml(tenseLabel)} conjugation">
+        <tbody>
+          ${rows.map((row) => `
+            <tr>
+              <th scope="row">${escapeHtml(row.pronoun)}</th>
+              <td><strong>${escapeHtml(row.value)}</strong></td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </article>
+  `;
+}
+
+function renderVerbConjugationSection(verbConjugation, fallbackWord = "") {
+  if (!hasVerbConjugationDataClient(verbConjugation)) {
+    return "";
+  }
+
+  const infinitive = String(verbConjugation.infinitive || fallbackWord || "").trim();
+  const infinitivePerfect = String(verbConjugation.infinitivePerfect || "").trim();
+  const participles = verbConjugation.participles || {};
+  const partizipI = String(participles.partizipI || "").trim();
+  const partizipII = String(participles.partizipII || "").trim();
+  const imperative = verbConjugation.imperative && typeof verbConjugation.imperative === "object"
+    ? verbConjugation.imperative
+    : {};
+
+  const imperativeParts = ["du", "ihr", "Sie"]
+    .map((pronoun) => {
+      const value = formatVerbConjugationValue(imperative[pronoun]);
+      if (value === "—") return "";
+      return `${pronoun}: ${value}`;
+    })
+    .filter(Boolean);
+
+  const tenseCards = verbConjugationTenseOrder
+    .map((tenseLabel) => renderVerbTenseTableHtml(tenseLabel, verbConjugation.tenses?.[tenseLabel]))
+    .filter(Boolean)
+    .join("");
+
+  const formsSummary = [
+    infinitive ? `Infinitive: ${infinitive}` : "",
+    infinitivePerfect ? `Infinitive Perfekt: ${infinitivePerfect}` : "",
+    partizipI ? `Partizip I: ${partizipI}` : "",
+    partizipII ? `Partizip II: ${partizipII}` : ""
+  ].filter(Boolean).join(" • ");
+
+  const lookupHint = verbConjugation.resolvedFromForm
+    && normalizeWord(verbConjugation.resolvedFromForm) !== normalizeWord(verbConjugation.normalizedWord || infinitive)
+    ? `Resolved verb form: ${verbConjugation.resolvedFromForm} -> ${verbConjugation.normalizedWord || infinitive}.`
+    : "";
+
+  return `
+    <section class="result-card__verb" aria-label="Live verb conjugation">
+      <div class="result-card__verb-top">
+        <div>
+          <p class="result-card__verb-title">Live Verb Forms</p>
+          <p class="result-card__verb-meta">${escapeHtml(formsSummary || "Conjugation forms found live.")}</p>
+        </div>
+        ${buildSpeakButtonHtml(infinitive, `Speak infinitive ${infinitive}`)}
+      </div>
+      ${imperativeParts.length > 0 ? `
+        <p class="result-card__verb-imperative"><strong>Imperative:</strong> ${escapeHtml(imperativeParts.join(" • "))}</p>
+      ` : ""}
+      <div class="result-card__verb-tense-grid">
+        ${tenseCards || "<p class=\"muted\">No tense table was available for this verb.</p>"}
+      </div>
+      ${lookupHint ? `<p class="result-card__verb-note">${escapeHtml(lookupHint)}</p>` : ""}
+    </section>
+  `;
+}
+
+function renderGenderStudyCard({ word, results, englishMeaning, pluralInfo, noteText, highlightWordName, verbConjugation }) {
   const safeResults = Array.isArray(results) ? results.filter(Boolean) : [];
   if (safeResults.length === 0) return;
 
   const isAmbiguous = safeResults.length > 1;
   const primary = safeResults[0];
+  const normalizedPluralInfo = normalizePluralInfo(pluralInfo);
   const articlePhrases = safeResults.map((result) => `${result.article} ${word}`);
   const badgesHtml = safeResults
     .map((result) => `<span class="${getBadgeClass(result.gender)}">${escapeHtml(result.article)} ${escapeHtml(result.label || genderLabels[result.gender])}</span>`)
@@ -1393,14 +2917,21 @@ function renderGenderStudyCard({ word, results, englishMeaning, noteText, highli
   const displayedMeaning = englishMeaning || (isAmbiguous
     ? "meaning depends on the article/gender"
     : "meaning unavailable");
+  const pluralLine = buildPluralLineText(normalizedPluralInfo);
 
   const examples = buildGenderExampleSentences({
     word,
     results: safeResults,
-    englishMeaning
+    englishMeaning,
+    pluralInfo: normalizedPluralInfo
   });
 
-  const speakText = articlePhrases.join(". ");
+  const pluralSpeakText = normalizedPluralInfo?.noPlural
+    ? "Dieses Wort hat meistens keinen Plural."
+    : (Array.isArray(normalizedPluralInfo?.phrases) && normalizedPluralInfo.phrases.length > 0
+      ? `Plural: ${normalizedPluralInfo.phrases.join(" oder ")}.`
+      : "");
+  const speakText = `${articlePhrases.join(". ")}.${pluralSpeakText ? ` ${pluralSpeakText}` : ""}`.trim();
   const speakerButtonHtml = speechSupported()
     ? `
       <button
@@ -1422,6 +2953,7 @@ function renderGenderStudyCard({ word, results, englishMeaning, noteText, highli
         <p class="result-card__word">${headline}${isAmbiguous ? " (multiple genders)" : ""}</p>
         <p class="result-card__meaning"><strong>English meaning:</strong> ${escapeHtml(displayedMeaning)}</p>
         <p class="result-card__detail"><strong>${escapeHtml(genderLine)}</strong></p>
+        <p class="result-card__detail"><strong>${escapeHtml(pluralLine)}</strong></p>
       </div>
       <div class="result-card__actions">
         ${speakerButtonHtml}
@@ -1438,6 +2970,7 @@ function renderGenderStudyCard({ word, results, englishMeaning, noteText, highli
       `).join("")}
     </div>
     <p class="result-card__tip">${escapeHtml(noteText || "Repeat the article and noun together to remember the gender.")}</p>
+    ${renderVerbConjugationSection(verbConjugation, word)}
   `;
 
   highlightWord(highlightWordName || null);
@@ -1472,6 +3005,7 @@ function renderResult(entry, originalInput = "") {
       label: genderLabels[entry.gender]
     }],
     englishMeaning: entry.meaning,
+    pluralInfo: getLocalPluralInfo(entry),
     noteText: entry.tip,
     highlightWordName: entry.word
   });
@@ -1484,7 +3018,7 @@ function renderLoadingResult(query) {
     <div class="result-card__top">
       <div>
         <p class="result-card__word">Looking up "${escapeHtml(query.trim() || "...")}"...</p>
-        <p class="result-card__meaning">Checking gender, English meaning, and preparing study sentences...</p>
+        <p class="result-card__meaning">Checking gender, live verb forms, English meaning, and study sentences...</p>
       </div>
       <div class="result-card__badges">
         <span class="badge badge--guess">Loading</span>
@@ -1499,7 +3033,8 @@ function renderLoadingResult(query) {
 }
 
 async function fetchLiveGender(query) {
-  const response = await fetch(`/api/gender?word=${encodeURIComponent(query)}`);
+  const endpoint = USE_EXTERNAL_API ? "/gender" : "/api/gender";
+  const response = await fetch(buildApiUrl(endpoint, { word: query }));
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
@@ -1511,7 +3046,8 @@ async function fetchLiveGender(query) {
 }
 
 async function fetchLiveSentenceTranslation(text) {
-  const response = await fetch(`/api/sentence/translate?text=${encodeURIComponent(text)}`);
+  const endpoint = USE_EXTERNAL_API ? "/sentence/translate" : "/api/sentence/translate";
+  const response = await fetch(buildApiUrl(endpoint, { text }));
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
@@ -1522,7 +3058,8 @@ async function fetchLiveSentenceTranslation(text) {
 }
 
 async function fetchSentenceValidation(text, mode = sentenceValidationMode) {
-  const response = await fetch(`/api/sentence/validate?text=${encodeURIComponent(text)}&mode=${encodeURIComponent(mode)}`);
+  const endpoint = USE_EXTERNAL_API ? "/sentence/validate" : "/api/sentence/validate";
+  const response = await fetch(buildApiUrl(endpoint, { text, mode }));
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
@@ -1777,6 +3314,7 @@ function renderLiveLookupResult(payload, originalInput) {
     const guessText = guess
       ? `A possible article to review while you check the word is: ${guess.article} ${payload.normalizedWord || String(originalInput || "").trim()}.`
       : suggestionText;
+    const verbSectionHtml = renderVerbConjugationSection(payload.verbConjugation, payload.normalizedWord || originalInput);
 
     resultCard.className = "result-card result-card--not-found";
     resultCard.innerHTML = `
@@ -1790,6 +3328,7 @@ function renderLiveLookupResult(payload, originalInput) {
         <div class="result-card__badges"></div>
       </div>
       <p class="result-card__tip">${escapeHtml(guessText)} ${payload.reason !== "empty_query" ? "Try the singular base form if you entered a plural or declined form." : ""}</p>
+      ${verbSectionHtml}
     `;
     highlightWord(localEntry ? localEntry.word : null);
     return;
@@ -1798,6 +3337,7 @@ function renderLiveLookupResult(payload, originalInput) {
   const results = Array.isArray(payload.results) ? payload.results : [];
   const isAmbiguous = results.length > 1;
   const englishMeaning = localEntry?.meaning || payload.englishMeaning || "";
+  const pluralInfo = normalizePluralInfo(payload.plural) || getLocalPluralInfo(localEntry || payload.normalizedWord || originalInput);
   const resolvedFromNote = payload.resolvedFromForm
     && payload.normalizedWord
     && normalizeWord(payload.resolvedFromForm) !== normalizeWord(payload.normalizedWord)
@@ -1813,8 +3353,10 @@ function renderLiveLookupResult(payload, originalInput) {
     word: payload.normalizedWord,
     results,
     englishMeaning,
+    pluralInfo,
     noteText,
-    highlightWordName: localEntry ? localEntry.word : null
+    highlightWordName: localEntry ? localEntry.word : null,
+    verbConjugation: payload.verbConjugation
   });
 }
 
@@ -1829,6 +3371,7 @@ function renderLookupError(error, originalInput) {
         label: genderLabels[localEntry.gender]
       }],
       englishMeaning: localEntry.meaning,
+      pluralInfo: getLocalPluralInfo(localEntry),
       noteText: localEntry.tip,
       highlightWordName: localEntry.word
     });
@@ -1975,6 +3518,491 @@ function activateTab(targetPanelId, focusTab = false) {
         ensureNumbersTabReady();
       }, 0);
     }
+  }
+
+  if (targetPanelId === "panel-conjugation") {
+    ensureConjugationTabReady();
+    if (typeof window !== "undefined") {
+      window.setTimeout(() => {
+        ensureConjugationTabReady();
+      }, 0);
+    }
+  }
+
+  if (targetPanelId === "panel-keyboard") {
+    updateKeyboardLiveAssistButton();
+    updateKeyboardSensitivityButtons();
+    renderKeyboardOutputPreview();
+  }
+}
+
+function getConjugationTypeKeys() {
+  return Object.keys(conjugationVerbTypeMeta);
+}
+
+function getConjugationVerbList(type) {
+  return Array.isArray(conjugationVerbCatalog[type]) ? conjugationVerbCatalog[type] : [];
+}
+
+function getConjugationVerb(type, id) {
+  return getConjugationVerbList(type).find((verb) => verb.id === id) || null;
+}
+
+function conjugationSubjectGerman(pronounKey) {
+  if (pronounKey === "er") return "er";
+  if (pronounKey === "sie") return "sie";
+  return pronounKey;
+}
+
+function conjugationSubjectEnglish(pronounKey) {
+  const map = {
+    ich: "i",
+    du: "you",
+    er: "he / she / it",
+    wir: "we",
+    ihr: "you",
+    sie: "they / you (formal)"
+  };
+  return map[pronounKey] || "someone";
+}
+
+function conjugationEnglishHead(verb) {
+  return String(verb?.english || "do")
+    .replace(/^to\s+/i, "")
+    .trim();
+}
+
+function conjugationDefaultMode(verb) {
+  if (verb?.defaultMode === "akkusativ") return "akkusativ";
+  if (verb?.defaultMode === "nominativ") return "nominativ";
+  return verb?.accObject ? "akkusativ" : "nominativ";
+}
+
+function resolveConjugationMode(verb, requestedMode) {
+  const selected = requestedMode === "default" ? conjugationDefaultMode(verb) : requestedMode;
+  if (selected === "akkusativ" && !verb?.accObject) {
+    return {
+      mode: "nominativ",
+      note: "This verb is shown in a Nominativ-focused pattern here because it does not use a simple direct object in this basic setup."
+    };
+  }
+  return {
+    mode: selected === "akkusativ" ? "akkusativ" : "nominativ",
+    note: ""
+  };
+}
+
+function conjugateRegularPresent(stem, pronounKey) {
+  const ending = regularPresentEndings[pronounKey] || "";
+  return `${stem}${ending}`;
+}
+
+function getConjugationPresentCore(verb, pronounKey) {
+  if (verb?.present && verb.present[pronounKey]) {
+    return verb.present[pronounKey];
+  }
+
+  if (verb?.stem) {
+    return conjugateRegularPresent(verb.stem, pronounKey);
+  }
+
+  const baseInfinitive = String(verb?.infinitive || "")
+    .replace(/^sich\s+/i, "")
+    .trim();
+  const stem = baseInfinitive.endsWith("en")
+    ? baseInfinitive.slice(0, -2)
+    : baseInfinitive;
+  return conjugateRegularPresent(stem, pronounKey);
+}
+
+function getConjugationAuxiliaryForm(auxiliary, pronounKey) {
+  const safeAux = auxiliary === "sein" ? "sein" : "haben";
+  return auxiliaryPresentMap[safeAux][pronounKey] || auxiliaryPresentMap.haben[pronounKey];
+}
+
+function getConjugationPredicateForTable(verb, tense, pronounKey) {
+  if (!verb) return "-";
+
+  if (tense === "perfect") {
+    const aux = getConjugationAuxiliaryForm(verb.perfectAux || "haben", pronounKey);
+    const reflexive = verb.reflexive ? `${reflexivePronounMap[pronounKey]} ... ` : "";
+    return `${aux} ${reflexive}${verb.participle}`.trim();
+  }
+
+  const core = getConjugationPresentCore(verb, pronounKey);
+  const reflexive = verb.reflexive ? ` ${reflexivePronounMap[pronounKey]}` : "";
+  if (verb.prefix) {
+    return `${core}${reflexive} ... ${verb.prefix}`;
+  }
+
+  return `${core}${reflexive}`.trim();
+}
+
+function buildConjugationSentencePack(verb, tense, pronounKey, requestedMode) {
+  const subjectDe = conjugationSubjectGerman(pronounKey);
+  const subjectEn = conjugationSubjectEnglish(pronounKey);
+  const modeResolution = resolveConjugationMode(verb, requestedMode);
+  const mode = modeResolution.mode;
+
+  const presentCore = getConjugationPresentCore(verb, pronounKey);
+  const aux = getConjugationAuxiliaryForm(verb.perfectAux || "haben", pronounKey);
+  const participle = verb.participle;
+  const reflexive = verb.reflexive ? reflexivePronounMap[pronounKey] : "";
+  const objectAcc = verb.accObject?.de || "";
+  const objectEn = verb.accObject?.en || "";
+  const complementDe = verb.complement?.de || "";
+  const complementEn = verb.complement?.en || "";
+
+  let germanSentence = "";
+  if (tense === "perfect") {
+    const parts = [capitalizeGermanNounClient(subjectDe), aux];
+    if (reflexive) parts.push(reflexive);
+    if (mode === "akkusativ" && objectAcc) parts.push(objectAcc);
+    if (mode !== "akkusativ" && complementDe) parts.push(complementDe);
+    parts.push(participle);
+    germanSentence = `${parts.join(" ")}.`;
+  } else if (verb.prefix) {
+    const middleParts = [];
+    if (reflexive) middleParts.push(reflexive);
+    if (mode === "akkusativ" && objectAcc) middleParts.push(objectAcc);
+    if (mode !== "akkusativ" && complementDe) middleParts.push(complementDe);
+    germanSentence = `${capitalizeGermanNounClient(subjectDe)} ${presentCore}${middleParts.length ? ` ${middleParts.join(" ")}` : ""} ${verb.prefix}.`;
+  } else {
+    const parts = [capitalizeGermanNounClient(subjectDe), presentCore];
+    if (reflexive) parts.push(reflexive);
+    if (mode === "akkusativ" && objectAcc) parts.push(objectAcc);
+    if (mode !== "akkusativ" && complementDe) parts.push(complementDe);
+    germanSentence = `${parts.join(" ")}.`;
+  }
+
+  const englishTail = mode === "akkusativ" ? objectEn : complementEn;
+  const englishMain = `${subjectEn} ${conjugationEnglishHead(verb)}${englishTail ? ` ${englishTail}` : ""}`.trim();
+  const englishSentence = `${capitalizeGermanNounClient(englishMain)}${tense === "perfect" ? " (present perfect meaning)." : "."}`;
+  const selectedForm = tense === "perfect" ? `${aux} ${participle}` : presentCore;
+
+  const caseLines = [`Nominativ subject: ${subjectDe}.`];
+  if (mode === "akkusativ" && objectAcc) {
+    caseLines.push(`Akkusativ object: ${objectAcc}.`);
+  } else {
+    caseLines.push("Akkusativ object: none in this selected pattern.");
+  }
+  if (reflexive) {
+    caseLines.push(`Reflexive pronoun used: ${reflexive}.`);
+  }
+  if (modeResolution.note) {
+    caseLines.push(modeResolution.note);
+  }
+
+  return {
+    germanSentence,
+    englishSentence,
+    selectedForm,
+    mode,
+    caseLines,
+    modeNote: modeResolution.note
+  };
+}
+
+function populateConjugationTypeSelect() {
+  if (!conjTypeSelect) return;
+
+  const keys = getConjugationTypeKeys();
+  if (keys.length === 0) return;
+
+  if (conjTypeSelect.options.length === 0) {
+    conjTypeSelect.innerHTML = keys.map((key) => {
+      const meta = conjugationVerbTypeMeta[key];
+      return `<option value="${escapeHtml(key)}">${escapeHtml(meta.label)}</option>`;
+    }).join("");
+  }
+
+  if (!conjTypeSelect.value || !keys.includes(conjTypeSelect.value)) {
+    conjTypeSelect.value = keys[0];
+  }
+}
+
+function populateConjugationVerbSelect(type, preferredVerbId = "") {
+  if (!conjVerbSelect) return;
+
+  const verbs = getConjugationVerbList(type);
+  if (verbs.length === 0) {
+    conjVerbSelect.innerHTML = "";
+    return;
+  }
+
+  conjVerbSelect.innerHTML = verbs.map((verb) => `
+    <option value="${escapeHtml(verb.id)}">
+      ${escapeHtml(verb.infinitive)} — ${escapeHtml(verb.english)}
+    </option>
+  `).join("");
+
+  const preferredExists = verbs.some((verb) => verb.id === preferredVerbId);
+  conjVerbSelect.value = preferredExists ? preferredVerbId : verbs[0].id;
+}
+
+function renderConjugationStepperDots() {
+  if (!conjStepperDots) return;
+  conjStepperDots.innerHTML = "";
+
+  conjugationLessons.forEach((step, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "stepper-dot";
+    button.dataset.conjStepIndex = String(index);
+    button.textContent = `${index + 1}. ${step.shortLabel}`;
+
+    if (index === currentConjugationStep) {
+      button.classList.add("is-active");
+      button.setAttribute("aria-current", "step");
+    } else if (conjugationStepState[index].completed) {
+      button.classList.add("is-complete");
+    }
+
+    conjStepperDots.appendChild(button);
+  });
+}
+
+function renderConjugationRoadmap() {
+  if (!conjRoadmapList || !conjRoadmapProgress) return;
+
+  const completedCount = conjugationStepState.filter((step) => step.completed).length;
+  conjRoadmapProgress.textContent = `${completedCount} / ${conjugationLessons.length} core lessons done`;
+
+  const coreItems = conjugationLessons.map((step, index) => {
+    const state = conjugationStepState[index];
+    const isCurrent = index === currentConjugationStep;
+    const badge = state.completed
+      ? { label: "Done", className: "is-done" }
+      : (isCurrent ? { label: "Current", className: "is-current" } : { label: "Locked", className: "is-locked" });
+
+    return `
+      <article class="conj-roadmap-item">
+        <div class="conj-roadmap-item__top">
+          <p class="conj-roadmap-item__title">Core ${index + 1}: ${escapeHtml(step.title.replace(/^Step\s+\d+:\s*/i, ""))}</p>
+          <span class="conj-roadmap-badge ${badge.className}">${badge.label}</span>
+        </div>
+        <p class="conj-roadmap-item__desc">${escapeHtml(step.explanation)}</p>
+      </article>
+    `;
+  });
+
+  const futureItems = [
+    "Dativ with verb-preposition patterns",
+    "Genitiv for formal writing patterns",
+    "Subordinate clauses and verb-final structure",
+    "Konjunktiv II for polite requests and hypotheticals"
+  ].map((title) => `
+    <article class="conj-roadmap-item">
+      <div class="conj-roadmap-item__top">
+        <p class="conj-roadmap-item__title">${escapeHtml(title)}</p>
+        <span class="conj-roadmap-badge is-locked">Planned</span>
+      </div>
+      <p class="conj-roadmap-item__desc">Unlock this in future lessons as your core conjugation steps become stable.</p>
+    </article>
+  `);
+
+  conjRoadmapList.innerHTML = `${coreItems.join("")}${futureItems.join("")}`;
+}
+
+function renderConjugationStep() {
+  if (!conjStepContent || !conjStepProgress) return;
+
+  const step = conjugationLessons[currentConjugationStep];
+  const stepState = conjugationStepState[currentConjugationStep];
+  const feedbackClass = stepState.checked
+    ? (stepState.selectedIndex === step.miniCheck.correctIndex ? "is-correct" : "is-wrong")
+    : "";
+  const feedbackText = stepState.checked
+    ? (stepState.selectedIndex === step.miniCheck.correctIndex
+      ? `Correct. ${step.miniCheck.explanation}`
+      : `Not quite. ${step.miniCheck.explanation}`)
+    : "Choose an option and click Check Answer.";
+
+  conjStepProgress.textContent = `Step ${currentConjugationStep + 1} / ${conjugationLessons.length}`;
+
+  conjStepContent.innerHTML = `
+    <h4>${escapeHtml(step.title)}</h4>
+    <p>${escapeHtml(step.explanation)}</p>
+    <ul class="acc-step-bullets">
+      ${step.bullets.map((bullet) => `<li>${escapeHtml(bullet)}</li>`).join("")}
+    </ul>
+    <div class="acc-step-example">
+      ${step.exampleLines.map((line) => `<div class="acc-step-example__line">${line}</div>`).join("")}
+    </div>
+
+    <div class="mini-check">
+      <p class="mini-check__prompt">${escapeHtml(step.miniCheck.prompt)}</p>
+      <div class="mini-check__options">
+        ${step.miniCheck.options.map((option, index) => {
+          const classes = ["mini-check-option"];
+          if (stepState.selectedIndex === index) classes.push("is-selected");
+
+          if (stepState.checked) {
+            if (index === step.miniCheck.correctIndex) {
+              classes.push("is-correct");
+            } else if (index === stepState.selectedIndex) {
+              classes.push("is-wrong");
+            }
+          }
+
+          return `
+            <button
+              type="button"
+              class="${classes.join(" ")}"
+              data-conj-mini-option="${index}"
+              aria-pressed="${stepState.selectedIndex === index ? "true" : "false"}"
+            >
+              ${escapeHtml(option)}
+            </button>
+          `;
+        }).join("")}
+      </div>
+      <div class="mini-check__actions">
+        <button type="button" class="filter-btn" data-conj-mini-action="check">Check Answer</button>
+        <button type="button" class="filter-btn filter-btn--ghost" data-conj-mini-action="reset">Reset</button>
+      </div>
+      <p class="mini-check__feedback ${feedbackClass}">${escapeHtml(feedbackText)}</p>
+    </div>
+  `;
+
+  if (conjPrevStepBtn) {
+    conjPrevStepBtn.disabled = currentConjugationStep === 0;
+  }
+  if (conjNextStepBtn) {
+    conjNextStepBtn.textContent = currentConjugationStep === conjugationLessons.length - 1
+      ? "Restart Path"
+      : "Next Step";
+  }
+
+  renderConjugationStepperDots();
+  renderConjugationRoadmap();
+}
+
+function goToConjugationStep(stepIndex) {
+  const bounded = Math.max(0, Math.min(conjugationLessons.length - 1, Number(stepIndex) || 0));
+  currentConjugationStep = bounded;
+  renderConjugationStep();
+}
+
+function handleConjugationMiniCheckAction(action) {
+  const step = conjugationLessons[currentConjugationStep];
+  const stepState = conjugationStepState[currentConjugationStep];
+
+  if (action === "reset") {
+    stepState.selectedIndex = null;
+    stepState.checked = false;
+    renderConjugationStep();
+    return;
+  }
+
+  if (action !== "check") return;
+  if (stepState.selectedIndex === null) {
+    stepState.checked = true;
+    renderConjugationStep();
+    return;
+  }
+
+  stepState.checked = true;
+  if (stepState.selectedIndex === step.miniCheck.correctIndex) {
+    stepState.completed = true;
+  }
+  renderConjugationStep();
+}
+
+function renderConjugationTable(type, verbId, tense) {
+  if (!conjConjugationTable) return;
+  const verb = getConjugationVerb(type, verbId);
+  if (!verb) {
+    conjConjugationTable.innerHTML = "<p class=\"muted\">Choose a verb to see the conjugation table.</p>";
+    return;
+  }
+
+  const rows = conjugationPronounOrder.map((pronounKey) => `
+    <tr>
+      <td>${escapeHtml(conjugationPronounMeta[pronounKey].label)}</td>
+      <td><strong>${escapeHtml(getConjugationPredicateForTable(verb, tense, pronounKey))}</strong></td>
+    </tr>
+  `).join("");
+
+  const tenseLabel = tense === "perfect" ? "Perfekt" : "Präsens";
+  conjConjugationTable.innerHTML = `
+    <table class="conj-table">
+      <thead>
+        <tr>
+          <th>Pronoun</th>
+          <th>${escapeHtml(verb.infinitive)} (${tenseLabel})</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+}
+
+function renderConjugationBuilder() {
+  if (!conjBuilderResult) return;
+
+  const type = conjTypeSelect?.value || getConjugationTypeKeys()[0];
+  const verbId = conjVerbSelect?.value || "";
+  const tense = conjTenseSelect?.value === "perfect" ? "perfect" : "present";
+  const subject = conjSubjectSelect?.value || "ich";
+  const pattern = conjPatternSelect?.value || "default";
+  const typeMeta = conjugationVerbTypeMeta[type];
+  const verb = getConjugationVerb(type, verbId);
+
+  if (!verb) {
+    conjBuilderResult.innerHTML = "<p class=\"drill-result__explain\">Choose a verb type and verb first.</p>";
+    renderConjugationTable(type, verbId, tense);
+    return;
+  }
+
+  const pack = buildConjugationSentencePack(verb, tense, subject, pattern);
+  const subjectLabel = conjugationPronounMeta[subject]?.label || subject;
+  const tenseLabel = tense === "perfect" ? "Perfekt (present perfect)" : "Präsens (present)";
+  const modeLabel = pack.mode === "akkusativ" ? "Nominativ + Akkusativ" : "Nominativ pattern";
+
+  conjBuilderResult.innerHTML = `
+    <p class="drill-result__sentence">Verb type: <em>${escapeHtml(typeMeta?.label || type)}</em></p>
+    <p class="drill-result__sentence">Infinitive: <em>${escapeHtml(verb.infinitive)}</em> (${escapeHtml(verb.english)})</p>
+    <p class="drill-result__sentence">Selected form: <em>${escapeHtml(subjectLabel)} ${escapeHtml(pack.selectedForm)}</em> (${escapeHtml(tenseLabel)})</p>
+    <p class="drill-result__sentence">Sentence: <em>${escapeHtml(pack.germanSentence)}</em></p>
+    <p class="drill-result__explain">English guide: ${escapeHtml(pack.englishSentence)}</p>
+    <p class="conj-builder-note"><strong>Case mode:</strong> ${escapeHtml(modeLabel)}</p>
+    <ul class="acc-step-bullets">
+      ${pack.caseLines.map((line) => `<li>${escapeHtml(line)}</li>`).join("")}
+      <li>${escapeHtml(verb.note || "Keep practicing with all pronouns for automatic recall.")}</li>
+    </ul>
+    <div class="time-speak-row">
+      ${buildSpeakButtonHtml(pack.germanSentence, `Speak conjugation sentence for ${verb.infinitive}`)}
+    </div>
+  `;
+
+  renderConjugationTable(type, verbId, tense);
+}
+
+function setConjugationType(type, preferredVerbId = "") {
+  const availableTypes = getConjugationTypeKeys();
+  if (!conjTypeSelect || availableTypes.length === 0) return;
+
+  const safeType = availableTypes.includes(type) ? type : availableTypes[0];
+  conjTypeSelect.value = safeType;
+  populateConjugationVerbSelect(safeType, preferredVerbId);
+  renderConjugationBuilder();
+}
+
+function ensureConjugationTabReady() {
+  if (!conjugationPanel) return;
+
+  populateConjugationTypeSelect();
+  setConjugationType(conjTypeSelect?.value || getConjugationTypeKeys()[0], conjVerbSelect?.value || "");
+
+  if (conjStepContent && !conjStepContent.textContent.trim()) {
+    renderConjugationStep();
+  } else {
+    renderConjugationRoadmap();
+  }
+
+  if (conjBuilderResult && !conjBuilderResult.textContent.trim()) {
+    renderConjugationBuilder();
   }
 }
 
@@ -3416,6 +5444,82 @@ accQuizCheckBtn.addEventListener("click", checkQuizAnswer);
 accQuizNextBtn.addEventListener("click", loadNextQuizQuestion);
 accQuizResetBtn.addEventListener("click", resetQuiz);
 
+if (conjPrevStepBtn) {
+  conjPrevStepBtn.addEventListener("click", () => {
+    goToConjugationStep(currentConjugationStep - 1);
+  });
+}
+
+if (conjNextStepBtn) {
+  conjNextStepBtn.addEventListener("click", () => {
+    if (currentConjugationStep === conjugationLessons.length - 1) {
+      goToConjugationStep(0);
+      return;
+    }
+    goToConjugationStep(currentConjugationStep + 1);
+  });
+}
+
+if (conjStepperDots) {
+  conjStepperDots.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-conj-step-index]");
+    if (!button) return;
+    const nextIndex = Number(button.dataset.conjStepIndex);
+    if (!Number.isFinite(nextIndex)) return;
+    goToConjugationStep(nextIndex);
+  });
+}
+
+if (conjStepContent) {
+  conjStepContent.addEventListener("click", (event) => {
+    const optionButton = event.target.closest("[data-conj-mini-option]");
+    if (optionButton) {
+      const stepState = conjugationStepState[currentConjugationStep];
+      stepState.selectedIndex = Number(optionButton.dataset.conjMiniOption);
+      if (stepState.checked) {
+        stepState.checked = false;
+      }
+      renderConjugationStep();
+      return;
+    }
+
+    const actionButton = event.target.closest("[data-conj-mini-action]");
+    if (actionButton) {
+      handleConjugationMiniCheckAction(actionButton.dataset.conjMiniAction || "");
+    }
+  });
+}
+
+if (conjTypeSelect) {
+  conjTypeSelect.addEventListener("change", () => {
+    setConjugationType(conjTypeSelect.value);
+  });
+}
+
+if (conjVerbSelect) {
+  conjVerbSelect.addEventListener("change", renderConjugationBuilder);
+}
+
+if (conjTenseSelect) {
+  conjTenseSelect.addEventListener("change", renderConjugationBuilder);
+}
+
+if (conjSubjectSelect) {
+  conjSubjectSelect.addEventListener("change", renderConjugationBuilder);
+}
+
+if (conjPatternSelect) {
+  conjPatternSelect.addEventListener("change", renderConjugationBuilder);
+}
+
+if (conjugationPanel) {
+  conjugationPanel.addEventListener("click", (event) => {
+    const speakButton = event.target.closest("[data-speak-text]");
+    if (!speakButton) return;
+    speakGermanText(speakButton.dataset.speakText || "");
+  });
+}
+
 posPrevStepBtn.addEventListener("click", () => {
   goToPossessiveStep(currentPossessiveStep - 1);
 });
@@ -3584,6 +5688,93 @@ if (numbersQuizResetBtn) {
   numbersQuizResetBtn.addEventListener("click", resetNumbersQuiz);
 }
 
+if (keyboardPanel) {
+  keyboardPanel.addEventListener("click", (event) => {
+    const suggestionButton = event.target.closest("[data-keyboard-apply-from][data-keyboard-apply-to]");
+    if (suggestionButton) {
+      applyKeyboardSuggestion(
+        suggestionButton.dataset.keyboardApplyFrom || "",
+        suggestionButton.dataset.keyboardApplyTo || ""
+      );
+      return;
+    }
+
+    const phraseButton = event.target.closest("[data-keyboard-phrase]");
+    if (phraseButton) {
+      insertKeyboardQuickPhrase(phraseButton.dataset.keyboardPhrase || "");
+      return;
+    }
+
+    const speakButton = event.target.closest("[data-speak-text]");
+    if (!speakButton) return;
+    speakGermanText(speakButton.dataset.speakText || "");
+  });
+}
+
+if (keyboardLayout) {
+  keyboardLayout.addEventListener("click", (event) => {
+    const keyButton = event.target.closest("[data-vk-value], [data-vk-action]");
+    if (!keyButton) return;
+
+    const action = keyButton.dataset.vkAction || "";
+    if (action) {
+      handleVirtualKeyboardAction(action);
+      return;
+    }
+
+    if (keyButton.dataset.vkValue !== undefined) {
+      insertTextAtCursor(keyboardInput, keyButton.dataset.vkValue || "");
+      renderKeyboardOutputPreview();
+    }
+  });
+}
+
+if (keyboardInput) {
+  keyboardInput.addEventListener("input", renderKeyboardOutputPreview);
+  keyboardInput.addEventListener("keydown", (event) => {
+    const shortcut = getKeyboardAltShortcutCharacter(event);
+    if (!shortcut) return;
+    event.preventDefault();
+    insertTextAtCursor(keyboardInput, shortcut);
+    renderKeyboardOutputPreview();
+    if (keyboardStatus) {
+      keyboardStatus.textContent = `Inserted ${shortcut} using Alt shortcut.`;
+    }
+  });
+}
+
+if (keyboardLiveAssistBtn) {
+  keyboardLiveAssistBtn.addEventListener("click", () => {
+    setKeyboardLiveAssistEnabled(!keyboardLiveAssistEnabled);
+  });
+}
+
+if (keyboardSensitivityToggle) {
+  keyboardSensitivityToggle.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-keyboard-sensitivity]");
+    if (!button) return;
+    setKeyboardSensitivity(button.dataset.keyboardSensitivity || "medium");
+  });
+}
+
+if (keyboardConvertBtn) {
+  keyboardConvertBtn.addEventListener("click", applyKeyboardEnglishToGermanConversion);
+}
+
+if (keyboardFixBtn) {
+  keyboardFixBtn.addEventListener("click", applyKeyboardMinorFixes);
+}
+
+if (keyboardCopyBtn) {
+  keyboardCopyBtn.addEventListener("click", () => {
+    copyKeyboardOutputText();
+  });
+}
+
+if (keyboardClearBtn) {
+  keyboardClearBtn.addEventListener("click", clearKeyboardWorkbench);
+}
+
 sentenceModeToggle.addEventListener("click", (event) => {
   const button = event.target.closest("[data-sentence-mode]");
   if (!button) return;
@@ -3679,10 +5870,19 @@ renderList();
 renderGenderBatchTags();
 renderGenderBatchModeButtons();
 setGenderBatchStatus("Add nouns as tags, choose simple or complex, then generate one sentence per word.");
+buildKeyboardVocabularyIndex();
+updateKeyboardLiveAssistButton();
+updateKeyboardSensitivityButtons();
+renderVirtualKeyboardLayout();
+renderKeyboardQuickPhrases();
+renderKeyboardOutputPreview();
 activateTab("panel-gender");
 renderAccusativeStep();
 renderAccusativeDrill();
 resetQuiz();
+populateConjugationTypeSelect();
+setConjugationType(conjTypeSelect?.value || getConjugationTypeKeys()[0], "");
+renderConjugationStep();
 renderPossessiveStep();
 renderPossessiveBuilder();
 resetPossessiveQuiz();
@@ -3693,9 +5893,11 @@ renderNumbersOrdinalReference();
 setNumbersExplorerValue(15);
 renderNumbersDateBuilder();
 ensureNumbersTabReady();
+ensureConjugationTabReady();
 if (typeof window !== "undefined") {
   window.setTimeout(() => {
     ensureNumbersTabReady();
+    ensureConjugationTabReady();
   }, 0);
 }
 sentenceHistory = loadSentenceHistoryFromStorage();
